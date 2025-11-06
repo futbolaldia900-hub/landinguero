@@ -4,23 +4,28 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>🎰 Circo Online</title>
-  
+
   <!--
-    CORRECCIÓN:
-    Se desactivó la llamada a Google Fonts que bloquea la carga.
+    OPTIMIZACIÓN DE FUENTES:
+    1. Pre-conectar al servidor de fuentes para ahorrar tiempo.
+    2. Cargar el CSS de las fuentes de forma "asíncrona" (no bloqueante)
+       usando 'rel="preload"' y 'onload'.
   -->
-  <!-- <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;600;700;900&family=Russo+One&display=swap" rel="stylesheet"> -->
-  
-  <!-- El CSS SÍ se carga, esto está bien -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;600;700;900&family=Russo+One&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;600;700;900&family=Russo+One&display=swap" rel="stylesheet"></noscript>
+
+  <!-- El CSS local se carga normalmente -->
   <link rel="stylesheet" href="estilo.css">
   
   <link rel="icon" type="image/png" href="img/favicon.png">
 
   <!--
-    CORRECCIÓN:
-    Se desactivó el Pixel de Facebook que bloquea la carga.
+    OPTIMIZACIÓN DE PIXEL:
+    El script ya es 'async', lo cual es bueno.
+    Lo dejamos aquí para que empiece a cargar sin bloquear.
   -->
-  <!-- 
   <script>
     !function(f,b,e,v,n,t,s)
     {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -34,13 +39,10 @@
     fbq('init', '1946841772846486');
     fbq('track', 'PageView');
   </script>
-  -->
 
 </head>
 <body style="background-image: url('img/fondotrebol.png'); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;">
   
-  <!-- El resto del HTML es idéntico y funciona bien -->
-
   <h1 class="logo-text" id="logoContainer" style="visibility: visible;">
     <span class="logo-emoji">🎰</span>
     <span class="logo-text-fill" id="casinoName" style="color: #00ff88; text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);">CASINO ONLINE</span>
@@ -48,6 +50,11 @@
 
   <div class="card" style="background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px);">
     <div class="main-text">
+      <!--
+        NOTA:
+        Las fuentes 'Russo One' y 'Poppins' ahora son cargadas por el
+        <link> optimizado en el <head>.
+      -->
       <p style="font-family: 'Russo One', sans-serif; font-size: 1.2rem; color: #00ff88; text-transform: uppercase; margin-bottom: 15px;"><span style="font-size: 1.3rem;">🔥</span> JUGÁ Y GANÁ EN GRANDE <span style="font-size: 1.3rem;">🔥</span></p>
       <p style="font-family: 'Poppins', sans-serif; font-size: 1.6rem; color: #FFD700; font-weight: 700; text-transform: uppercase;">RETIROS ILIMITADOS</p>
     </div>
@@ -68,6 +75,7 @@
       <img src="img/game.pragmaticPlaySweetBonanza.thumbnail.512x512_v4.png" alt="Deportes">
       <img src="img/game.pragmaticPlayCongoCash.thumbnail.512x512_v3.png" alt="Jackpot">
       <img src="img/game.mg9MasksOfFire.thumbnail.512x512_v3.png" alt="Bonus">
+      <!-- segundo set (duplicado para loop infinito) -->
       <img src="img/game.pragmaticPlayGatesOfOlympus.thumbnail.512x512_v4.png" alt="Slots">
       <img src="img/game.pragmaticPlayGoldParty.thumbnail.512x512_v3.png" alt="Ruleta">
       <img src="img/game.pragmaticPlayJokersJewels.thumbnail.512x512_v3.png" alt="Cartas">
@@ -79,7 +87,7 @@
   
   <div class="info-externa" style="background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2);">
     <p id="minimoDeposito">Mínimo de carga: $1000</p>
-    <p>CASINO EN VIVO - SLOTS - APUESTAS DEPORTIVAS</p>
+    <p>CIRCO EN VIVO - SLOTS - APUESTAS DEPORTIVAS</p>
   </div>
 
   <div class="metodos-pago" style="background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2);">
@@ -99,15 +107,13 @@
       if (whatsappButton) {
         whatsappButton.addEventListener('click', () => {
           const waNumber = '5492236735328';
-          const waMessage = encodeURIComponent('Hola, quiero crearme un usuario');
+          const waMessage = encodeURIComponent('Hola, quiero más información');
           const whatsappUrl = `https://wa.me/${waNumber}?text=${waMessage}`;
           
-          // La llamada al Pixel estaba aquí, pero la quitamos por la prueba
-          /*
+          // Se activa el evento 'Contact' del Pixel al hacer clic
           if (typeof fbq !== 'undefined') {
             fbq('track', 'Contact');
           }
-          */
           
           window.open(whatsappUrl, '_blank');
         });
@@ -115,5 +121,4 @@
     });
   </script>
 </body>
-
 </html>

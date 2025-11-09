@@ -1,177 +1,140 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Registrar Compra (Meta CAPI) — Admin</title>
-<style>
-  :root {
-    --bg:#0e0e0e;
-    --panel:#1b1b1b;
-    --accent:#4db8ff;
-    --muted:#cccccc;
-    --success:#8ef08e;
-    --danger:#ff6b6b;
-  }
-  html,body {
-    margin:0;
-    height:100%;
-    background:var(--bg);
-    font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;
-    color:#fff;
-  }
-  .hidden{display:none;}
-  .modal {
-    position:fixed;
-    inset:0;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:rgba(0,0,0,0.85);
-    z-index:9999;
-  }
-  .mcard {
-    background:#222;
-    padding:24px;
-    border-radius:12px;
-    width:320px;
-    border:1px solid rgba(255,255,255,0.1);
-    text-align:center;
-    box-shadow:0 0 20px rgba(77,184,255,0.3);
-  }
-  input,button {
-    width:100%;
-    padding:10px;
-    border-radius:8px;
-    font-size:15px;
-  }
-  input {
-    border:1px solid rgba(255,255,255,0.15);
-    background:#111;
-    color:#fff;
-  }
-  button {
-    margin-top:10px;
-    background:var(--accent);
-    border:none;
-    color:#000;
-    font-weight:bold;
-    cursor:pointer;
-  }
-  .card {
-    max-width:420px;
-    margin:auto;
-    background:#1a1a1a;
-    border-radius:12px;
-    padding:20px;
-    box-shadow:0 4px 30px rgba(0,0,0,0.4);
-    border:1px solid rgba(255,255,255,0.05);
-  }
-  label{display:block;margin-top:10px;font-size:13px;color:var(--muted);}
-  h1{color:var(--accent);}
-  #response {
-    margin-top:10px;
-    padding:10px;
-    background:#000;
-    border-radius:8px;
-    font-family:monospace;
-    color:var(--success);
-    white-space:pre-wrap;
-    border:1px solid rgba(255,255,255,0.1);
-  }
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Registrar Compra (Meta CAPI) — Admin</title>
+  <style>
+    :root {
+      --bg:#080808;
+      --panel:#151515;
+      --accent:#4db8ff;
+      --muted:#bdbdbd;
+      --success:#8ef08e;
+      --danger:#ff6b6b;
+    }
+    html, body {
+      height:100%; margin:0;
+      font-family: Inter, system-ui, sans-serif;
+      background: var(--bg);
+      color: #fff;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .card {
+      width:100%; max-width:420px;
+      background: var(--panel);
+      border-radius:12px;
+      padding:20px;
+      box-shadow:0 8px 30px rgba(0,0,0,0.6);
+    }
+    h1 { margin-top:0; font-size:20px; color:var(--accent); }
+    label { display:block; margin-top:10px; font-size:14px; color:var(--muted); }
+    input, button { width:100%; box-sizing:border-box; }
+    input {
+      padding:10px; border-radius:8px;
+      border:1px solid rgba(255,255,255,0.1);
+      background:#111; color:#fff; font-size:15px;
+    }
+    button {
+      margin-top:14px; padding:12px; border-radius:10px;
+      border:none; background:var(--accent);
+      color:#000; font-weight:700; cursor:pointer; font-size:15px;
+    }
+    #response {
+      margin-top:14px; background:#0b0b0b; padding:12px;
+      border-radius:8px; color:var(--success);
+      font-family:monospace; white-space:pre-wrap;
+      max-height:220px; overflow:auto;
+    }
+    .hidden { display:none; }
+    .modal {
+      position:fixed; inset:0; background:rgba(0,0,0,0.7);
+      display:flex; align-items:center; justify-content:center;
+    }
+    .modal .mcard {
+      background:#111; padding:20px; border-radius:10px; width:300px;
+    }
+  </style>
 </head>
 <body>
-
-<!-- MODAL LOGIN -->
-<div id="loginModal" class="modal">
-  <div class="mcard">
-    <h2 style="color:var(--accent);margin:0 0 8px;">Acceso Administrador</h2>
-    <p style="font-size:14px;color:var(--muted)">Ingrese la contraseña para continuar</p>
-    <input id="adminPasswordInput" type="password" placeholder="Contraseña" />
-    <button id="btnLogin">Entrar</button>
-    <p style="font-size:12px;color:var(--muted);margin-top:6px;">Si no ve este recuadro, algo falló en el estilo.</p>
+  <!-- LOGIN -->
+  <div id="loginModal" class="modal">
+    <div class="mcard">
+      <h2 style="color:var(--accent)">Acceso Administrador</h2>
+      <input id="adminPasswordInput" type="password" placeholder="Contraseña" />
+      <button id="btnLogin">Entrar</button>
+    </div>
   </div>
-</div>
 
-<!-- PANEL -->
-<div id="adminCard" class="hidden">
-  <div class="card">
-    <h1>Registrar Compra</h1>
+  <!-- PANEL -->
+  <div class="card" id="adminCard" style="display:none">
+    <h1>Registrar Compra (Meta CAPI)</h1>
     <form id="purchaseForm">
-      <label>Nombre</label>
-      <input type="text" id="firstName" placeholder="Ej: Juan" required>
-      <label>Apellido</label>
-      <input type="text" id="lastName" placeholder="Ej: Pérez" required>
-      <label>Teléfono (+549...)</label>
-      <input type="text" id="phone" placeholder="+5491122334455" required>
-      <label>Monto (ARS)</label>
-      <input type="number" id="amount" placeholder="26000" required>
-      <label>Fecha y hora</label>
-      <input type="datetime-local" id="event_time">
+      <label>Email del comprador</label>
+      <input type="email" id="email" placeholder="ej: cliente@mail.com" required />
+      <label>Teléfono del comprador (+549...)</label>
+      <input type="text" id="phone" placeholder="+5491122334455" required />
+      <label>Monto en ARS</label>
+      <input type="number" id="amount" placeholder="26000" required />
+      <label>Fecha y hora (opcional)</label>
+      <input type="datetime-local" id="event_time" />
       <button type="submit">Enviar compra a Meta</button>
-      <button type="button" id="btnClear" style="background:transparent;border:1px solid #444;color:#ccc;margin-top:8px;">Limpiar</button>
     </form>
     <div id="response" class="hidden"></div>
   </div>
-</div>
 
-<script>
-const ADMIN_PASSWORD = "45864722"; // cámbiala
+  <script>
+    const ADMIN_PASSWORD = "45864722";
 
-const loginModal = document.getElementById('loginModal');
-const adminCard = document.getElementById('adminCard');
-document.getElementById('btnLogin').addEventListener('click',()=>{
-  const val=document.getElementById('adminPasswordInput').value;
-  if(val===ADMIN_PASSWORD){
-    loginModal.style.display='none';
-    adminCard.classList.remove('hidden');
-  }else{
-    alert("Contraseña incorrecta");
-  }
-});
-document.getElementById('adminPasswordInput').addEventListener('keydown',e=>{
-  if(e.key==="Enter")document.getElementById('btnLogin').click();
-});
+    // login básico
+    const loginModal = document.getElementById('loginModal');
+    const adminCard = document.getElementById('adminCard');
+    document.getElementById('btnLogin').addEventListener('click', ()=>{
+      const v = document.getElementById('adminPasswordInput').value;
+      if (v === ADMIN_PASSWORD) {
+        loginModal.style.display = 'none';
+        adminCard.style.display = 'block';
+      } else {
+        alert('Contraseña incorrecta');
+      }
+    });
 
-function sanitizePhoneRaw(s){
-  if(!s)return s;
-  s=s.trim();
-  const hasPlus=s.startsWith('+');
-  const digits=s.replace(/\D/g,'');
-  return (hasPlus?'+':'')+digits;
-}
+    // form handler
+    const form = document.getElementById('purchaseForm');
+    const responseBox = document.getElementById('response');
 
-const form=document.getElementById('purchaseForm');
-const resp=document.getElementById('response');
-document.getElementById('btnClear').addEventListener('click',()=>{form.reset();resp.classList.add('hidden');});
-form.addEventListener('submit',async e=>{
-  e.preventDefault();
-  resp.classList.remove('hidden');
-  resp.style.color='#ccc';
-  resp.textContent='⏳ Enviando compra...';
-  const payload={
-    firstName:document.getElementById('firstName').value.trim(),
-    lastName:document.getElementById('lastName').value.trim(),
-    phone:sanitizePhoneRaw(document.getElementById('phone').value.trim()),
-    amount:document.getElementById('amount').value.trim(),
-    event_time:document.getElementById('event_time').value||null
-  };
-  try{
-    const r=await fetch('/api/meta-purchase',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-    const j=await r.json();
-    if(j?.metaResponse?.events_received===1){
-      resp.style.color='var(--success)';
-      resp.textContent='✅ Compra enviada correctamente\n\n'+JSON.stringify(j.metaResponse,null,2);
-    }else{
-      resp.style.color='var(--danger)';
-      resp.textContent='❌ Error\n'+JSON.stringify(j,null,2);
-    }
-  }catch(err){
-    resp.style.color='var(--danger)';
-    resp.textContent='❌ Error de red: '+err.message;
-  }
-});
-</script>
+    form.addEventListener('submit', async e=>{
+      e.preventDefault();
+      responseBox.classList.remove('hidden');
+      responseBox.style.color = 'var(--muted)';
+      responseBox.textContent = '⏳ Enviando compra a Meta...';
+
+      const payload = {
+        email: document.getElementById('email').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        amount: document.getElementById('amount').value,
+        event_time: document.getElementById('event_time').value || null
+      };
+
+      try {
+        const res = await fetch('/api/meta-purchase', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify(payload)
+        });
+        const json = await res.json();
+        if (json && json.metaResponse && json.metaResponse.events_received === 1) {
+          responseBox.style.color = 'var(--success)';
+          responseBox.textContent = '✅ Compra enviada correctamente:\n\n' + JSON.stringify(json.metaResponse, null, 2);
+        } else {
+          responseBox.style.color = 'var(--danger)';
+          responseBox.textContent = '❌ Error:\n' + JSON.stringify(json, null, 2);
+        }
+      } catch(err) {
+        responseBox.style.color = 'var(--danger)';
+        responseBox.textContent = '❌ Error de red: ' + err.message;
+      }
+    });
+  </script>
 </body>
 </html>

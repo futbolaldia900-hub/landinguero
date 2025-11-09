@@ -1,0 +1,11 @@
+{
+  "name": "capi-project-final",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "facebook-nodejs-business-sdk": "latest"
+  },
+  "engines": {
+    "node": "22.x"
+  }
+}

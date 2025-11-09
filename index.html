@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>🎰 Circo Online</title>
 
+  <!-- META DE VERIFICACIÓN DE DOMINIO DE META -->
+  <meta name="facebook-domain-verification" content="o1hoq82czvz17489kpf7eb2sqc8ta1" />
+
   <!--
     OPTIMIZACIÓN DE FUENTES:
     1. Pre-conectar al servidor de fuentes para ahorrar tiempo.
@@ -21,11 +24,7 @@
   
   <link rel="icon" type="image/png" href="img/favicon.png">
 
-  <!--
-    OPTIMIZACIÓN DE PIXEL:
-    El script ya es 'async', lo cual es bueno.
-    Lo dejamos aquí para que empiece a cargar sin bloquear.
-  -->
+  <!-- PIXEL DE META -->
   <script>
     !function(f,b,e,v,n,t,s)
     {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -50,11 +49,6 @@
 
   <div class="card" style="background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px);">
     <div class="main-text">
-      <!--
-        NOTA:
-        Las fuentes 'Russo One' y 'Poppins' ahora son cargadas por el
-        <link> optimizado en el <head>.
-      -->
       <p style="font-family: 'Russo One', sans-serif; font-size: 1.2rem; color: #00ff88; text-transform: uppercase; margin-bottom: 15px;"><span style="font-size: 1.3rem;">🔥</span> JUGÁ Y GANÁ EN GRANDE <span style="font-size: 1.3rem;">🔥</span></p>
       <p style="font-family: 'Poppins', sans-serif; font-size: 1.6rem; color: #FFD700; font-weight: 700; text-transform: uppercase;">RETIROS ILIMITADOS</p>
     </div>
@@ -75,7 +69,7 @@
       <img src="img/game.pragmaticPlaySweetBonanza.thumbnail.512x512_v4.png" alt="Deportes">
       <img src="img/game.pragmaticPlayCongoCash.thumbnail.512x512_v3.png" alt="Jackpot">
       <img src="img/game.mg9MasksOfFire.thumbnail.512x512_v3.png" alt="Bonus">
-      <!-- segundo set (duplicado para loop infinito) -->
+      <!-- segundo set -->
       <img src="img/game.pragmaticPlayGatesOfOlympus.thumbnail.512x512_v4.png" alt="Slots">
       <img src="img/game.pragmaticPlayGoldParty.thumbnail.512x512_v3.png" alt="Ruleta">
       <img src="img/game.pragmaticPlayJokersJewels.thumbnail.512x512_v3.png" alt="Cartas">
@@ -103,14 +97,12 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const whatsappButton = document.getElementById('whatsappButton');
-
       if (whatsappButton) {
         whatsappButton.addEventListener('click', () => {
           const waNumber = '5492236735372';
           const waMessage = encodeURIComponent('Hola, quiero más información');
           const whatsappUrl = `https://wa.me/${waNumber}?text=${waMessage}`;
           
-          // Se activa el evento 'Contact' del Pixel al hacer clic
           if (typeof fbq !== 'undefined') {
             fbq('track', 'Contact');
           }
@@ -122,5 +114,3 @@
   </script>
 </body>
 </html>
-
-

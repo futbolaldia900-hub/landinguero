@@ -8,20 +8,14 @@
   <!-- META DE VERIFICACIÓN DE DOMINIO DE META -->
   <meta name="facebook-domain-verification" content="o1hoq82czvz17489kpf7eb2sqc8ta1" />
 
-  <!--
-    OPTIMIZACIÓN DE FUENTES:
-    1. Pre-conectar al servidor de fuentes para ahorrar tiempo.
-    2. Cargar el CSS de las fuentes de forma "asíncrona" (no bloqueante)
-       usando 'rel="preload"' y 'onload'.
-  -->
+  <!-- OPTIMIZACIÓN DE FUENTES -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;600;700;900&family=Russo+One&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;600;700;900&family=Russo+One&display=swap" rel="stylesheet"></noscript>
 
-  <!-- El CSS local se carga normalmente -->
+  <!-- CSS -->
   <link rel="stylesheet" href="estilo.css">
-  
   <link rel="icon" type="image/png" href="img/favicon.png">
 
   <!-- PIXEL DE META -->
@@ -94,6 +88,33 @@
     </div>
   </div>
 
+  <!-- SCRIPT PARA GUARDAR LEAD AUTOMÁTICAMENTE -->
+  <script>
+  async function saveLead(data) {
+    await fetch("https://script.google.com/macros/s/AKfycby_otbdnM6_QZuYKMX9fMx-46qXM80b4UpNe19W8NKcDzFpRre27AtGp3w1OerPGBLF/exec", {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  window.addEventListener("load", () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const fbc = urlParams.get("fbclid")
+      ? `fb.1.${Date.now()}.${urlParams.get("fbclid")}`
+      : "";
+
+    const leadData = {
+      lead_id: `LEAD-${Math.floor(Math.random() * 1000000)}`,
+      token: Math.random().toString(36).substring(2, 6).toUpperCase(),
+      fbc: fbc,
+    };
+
+    saveLead(leadData);
+  });
+  </script>
+
+  <!-- BOTÓN WHATSAPP -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const whatsappButton = document.getElementById('whatsappButton');

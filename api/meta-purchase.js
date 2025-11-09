@@ -59,8 +59,6 @@ export default async function handler(req, res) {
           action_source: "website",
         },
       ],
-      // ⚙️ Código de prueba: quitar o comentar al pasar a producción
-      test_event_code: "TEST14318",
     };
 
     // 🚀 Envío a Meta Conversion API

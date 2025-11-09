@@ -1,124 +1,116 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Registrar Compra (Meta CAPI)</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        background: #121212;
-        color: #f1f1f1;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        flex-direction: column;
-        margin: 0;
-      }
-      .container {
-        background: #1e1e1e;
-        padding: 20px;
-        border-radius: 12px;
-        width: 340px;
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
-      }
-      input,
-      button {
-        width: 100%;
-        padding: 10px;
-        margin: 6px 0;
-        border: none;
-        border-radius: 6px;
-      }
-      input {
-        background: #2b2b2b;
-        color: #fff;
-      }
-      button {
-        background: #3b82f6;
-        color: #fff;
-        cursor: pointer;
-        font-weight: bold;
-      }
-      button:hover {
-        background: #2563eb;
-      }
-      #response {
-        margin-top: 10px;
-        font-size: 0.9em;
-        word-wrap: break-word;
-        white-space: pre-wrap;
-      }
-      #login {
-        text-align: center;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container" id="login">
-      <h2>Acceso restringido</h2>
-      <input type="password" id="password" placeholder="Contraseña" />
-      <button onclick="login()">Entrar</button>
-      <p id="login-error" style="color: red;"></p>
-    </div>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin — Registrar Compra (Meta CAPI)</title>
+  <style>
+    body { font-family: Arial, sans-serif; background:#0b0b0b; color:#f2f2f2; display:flex; align-items:center; justify-content:center; height:100vh; margin:0; }
+    .card { background:#111; padding:20px; border-radius:10px; width:360px; box-shadow:0 8px 30px rgba(0,0,0,0.6); }
+    input, button { width:100%; padding:10px; margin:8px 0; border-radius:6px; border:1px solid #222; background:#0d0d0d; color:#fff; }
+    button { background:#1f8ef1; border:none; font-weight:700; cursor:pointer; }
+    button:disabled { opacity:0.6; cursor:not-allowed; }
+    #response { margin-top:10px; white-space:pre-wrap; font-size:0.9rem; }
+    .hint { font-size:0.85rem; color:#9aa; margin-bottom:8px; }
+    label { font-size:0.85rem; color:#cfd; display:block; margin-top:6px; }
+  </style>
+</head>
+<body>
+  <div class="card" role="main">
+    <h2 style="margin:0 0 10px 0;">Registrar Compra — CAPI</h2>
 
-    <div class="container" id="form-container" style="display:none;">
-      <h2>Registrar Compra (Meta CAPI)</h2>
-      <input type="text" id="nombre" placeholder="Nombre del comprador" />
-      <input type="text" id="apellido" placeholder="Apellido del comprador" />
-      <input type="text" id="phone" placeholder="Teléfono (+5491122334455)" />
-      <input type="number" id="amount" placeholder="Monto en ARS (ej: 26000)" />
-      <input type="datetime-local" id="event_time" />
-      <button onclick="sendPurchase()">Enviar compra a Meta</button>
-      <div id="response"></div>
-    </div>
+    <p class="hint">Ingresá la <strong>clave administrativa</strong> (Admin Token) — la guardás en Vercel como <code>ADMIN_TOKEN</code>.</p>
 
-    <script>
-      const ADMIN_PASSWORD = "45864722"; // <- cámbiala antes de subir
+    <label for="adminToken">Clave administrativa</label>
+    <input id="adminToken" type="password" autocomplete="off" placeholder="TOKEN ADMIN (no lo guardes aquí)" />
 
-      function login() {
-        const input = document.getElementById("password").value.trim();
-        if (input === ADMIN_PASSWORD) {
-          document.getElementById("login").style.display = "none";
-          document.getElementById("form-container").style.display = "block";
+    <label for="nombre">Nombre</label>
+    <input id="nombre" type="text" placeholder="Nombre" />
+
+    <label for="apellido">Apellido</label>
+    <input id="apellido" type="text" placeholder="Apellido" />
+
+    <label for="phone">Teléfono (ej: +5491122334455)</label>
+    <input id="phone" type="text" placeholder="+5491122334455" />
+
+    <label for="amount">Monto en ARS (ej: 26000)</label>
+    <input id="amount" type="number" placeholder="26000" />
+
+    <label for="event_time">Fecha y hora (opcional)</label>
+    <input id="event_time" type="datetime-local" />
+
+    <button id="sendBtn">Enviar compra a Meta</button>
+
+    <div id="response" aria-live="polite"></div>
+  </div>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    const sendBtn = $('sendBtn');
+    const resp = $('response');
+
+    function validatePhone(p) {
+      if (!p) return false;
+      // Normaliza: solo dígitos y + al inicio opcional
+      const cleaned = p.trim();
+      // mínimo 7 dígitos
+      const digits = cleaned.replace(/\D/g, '');
+      return digits.length >= 7;
+    }
+
+    async function sendPurchase() {
+      resp.textContent = '';
+      const adminToken = $('adminToken').value.trim();
+      const nombre = $('nombre').value.trim();
+      const apellido = $('apellido').value.trim();
+      const phone = $('phone').value.trim();
+      const amount = $('amount').value.trim();
+      const event_time = $('event_time').value;
+
+      if (!adminToken) { resp.textContent = '🔒 Necesitás la clave administrativa.'; return; }
+      if (!nombre || !apellido || !phone || !amount) {
+        resp.textContent = '❌ Completa todos los campos obligatorios.';
+        return;
+      }
+      if (!validatePhone(phone)) { resp.textContent = '❌ Teléfono inválido.'; return; }
+
+      sendBtn.disabled = true;
+      sendBtn.textContent = 'Enviando...';
+
+      try {
+        const payload = { nombre, apellido, phone, amount, event_time };
+        const res = await fetch('/api/meta-purchase', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + adminToken
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (res.ok && data.success) {
+          resp.textContent = '✅ Compra enviada correctamente.\n\n' + JSON.stringify(data.metaResponse, null, 2);
         } else {
-          document.getElementById("login-error").innerText = "Contraseña incorrecta";
+          resp.textContent = '❌ Error: ' + (data.error || data.message || JSON.stringify(data));
         }
+      } catch (e) {
+        resp.textContent = '❌ Error de red o servidor: ' + e.message;
+      } finally {
+        sendBtn.disabled = false;
+        sendBtn.textContent = 'Enviar compra a Meta';
       }
+    }
 
-      async function sendPurchase() {
-        const nombre = document.getElementById("nombre").value.trim();
-        const apellido = document.getElementById("apellido").value.trim();
-        const phone = document.getElementById("phone").value.trim();
-        const amount = document.getElementById("amount").value.trim();
-        const event_time = document.getElementById("event_time").value;
+    sendBtn.addEventListener('click', sendPurchase);
 
-        if (!nombre || !apellido || !phone || !amount) {
-          document.getElementById("response").innerHTML = "❌ Faltan datos obligatorios.";
-          return;
-        }
-
-        try {
-          const res = await fetch("/api/meta-purchase", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ nombre, apellido, phone, amount, event_time }),
-          });
-
-          const data = await res.json();
-          document.getElementById("response").innerHTML =
-            data.success
-              ? `✅ Compra enviada correctamente a Meta\n\n${JSON.stringify(
-                  data.metaResponse,
-                  null,
-                  2
-                )}`
-              : `❌ Error: ${data.error || "desconocido"}`;
-        } catch (err) {
-          document.getElementById("response").innerHTML = "❌ Error de red o servidor.";
-        }
+    // Atajo Enter para enviar
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        if (!sendBtn.disabled) sendPurchase();
       }
-    </script>
-  </body>
+    });
+  </script>
+</body>
 </html>

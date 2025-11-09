@@ -45,7 +45,6 @@ export default async function handler(req, res) {
           action_source: "website",
         },
       ],
-      test_event_code: "TEST14318", // <--- agregado para pruebas
     };
 
     const response = await fetch(

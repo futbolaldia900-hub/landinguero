@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel de Ventas - Meta CAPI (Seguridad)</title>
+  <style>
+    body {
+      font-family: "Inter", sans-serif;
+      background: #0b0b0b;
+      color: #e0e0e0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    #login, #panel {
+      background: #1a1a1a;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.6);
+      width: 90%;
+      max-width: 400px;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    input { background: #2b2b2b; color: white; }
+    button {
+      background: #1877f2;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover { background: #0f5ccc; }
+    #result {
+      margin-top: 15px;
+      white-space: pre-wrap;
+      background: #222;
+      padding: 10px;
+      border-radius: 8px;
+      color: #9cf59c;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN -->
+  <div id="login">
+    <h2>Acceso restringido</h2>
+    <input type="password" id="password" placeholder="Contraseña de acceso" />
+    <button onclick="login()">Entrar</button>
+    <p id="loginError" style="color: red; display: none;">Contraseña incorrecta</p>
+  </div>
+
+  <!-- PANEL -->
+  <div id="panel" style="display:none;">
+    <h2>Registrar Compra (Meta CAPI)</h2>
+    <form id="purchaseForm">
+      <input type="text" id="phone" placeholder="Teléfono del comprador (ej: 1122334455)" />
+      <input type="email" id="email" placeholder="Email del comprador (opcional)" />
+      <input type="number" id="amount" placeholder="Monto en ARS (ej: 26000)" required />
+      <label for="date">Fecha y hora de compra:</label>
+      <input type="datetime-local" id="date" />
+      <button type="submit">Enviar compra a Meta</button>
+    </form>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    // 🔐 Contraseña configurable
+    const ADMIN_PASSWORD = "45864722"; // ← Cambiala a la que vos quieras
+
+    function login() {
+      const input = document.getElementById("password").value;
+      if (input === ADMIN_PASSWORD) {
+        document.getElementById("login").style.display = "none";
+        document.getElementById("panel").style.display = "block";
+      } else {
+        document.getElementById("loginError").style.display = "block";
+      }
+    }
+
+    const form = document.getElementById("purchaseForm");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const phone = document.getElementById("phone").value;
+      const email = document.getElementById("email").value;
+      const amount = document.getElementById("amount").value;
+      const event_time = document.getElementById("date").value;
+
+      if (!amount || (!phone && !email)) {
+        alert("Debes ingresar al menos teléfono o email, y el monto en ARS.");
+        return;
+      }
+
+      const res = await fetch("/api/meta-purchase", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone, email, amount, event_time }),
+      });
+
+      const data = await res.json();
+      if (data.success && !data.metaResponse.error) {
+        document.getElementById("result").innerHTML =
+          "✅ Compra enviada correctamente a Meta\n\n" + JSON.stringify(data.metaResponse, null, 2);
+      } else {
+        document.getElementById("result").innerHTML =
+          "❌ Error al enviar\n\n" + JSON.stringify(data.metaResponse || data, null, 2);
+      }
+    });
+  </script>
+</body>
+</html>

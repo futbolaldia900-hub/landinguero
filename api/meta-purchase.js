@@ -1,4 +1,3 @@
-// /api/meta-purchase.js
 import crypto from "crypto";
 
 export default async function handler(req, res) {
@@ -33,7 +32,7 @@ export default async function handler(req, res) {
           event_name: "Purchase",
           event_time: event_time
             ? Math.floor(new Date(event_time).getTime() / 1000)
-            : Math.floor(Date.now() / 1000), // usa la fecha elegida o ahora
+            : Math.floor(Date.now() / 1000),
           event_id: event_id || `manual_${Date.now()}`,
           user_data: {
             ph: hashedPhone ? [hashedPhone] : [],
@@ -46,6 +45,7 @@ export default async function handler(req, res) {
           action_source: "website",
         },
       ],
+      test_event_code: "TEST14318", // <--- agregado para pruebas
     };
 
     const response = await fetch(

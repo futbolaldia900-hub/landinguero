@@ -6,8 +6,6 @@ module.exports = (request, response) => {
   // 1. Tu lista de números de WhatsApp
   const misLineas = [
     '5492236735372', 
-    '5492230000001',
-    '5492230000002'
   ];
 
   // 2. Lógica de elección: Elegir un número al azar

@@ -1,3 +1,4 @@
+// /api/meta-purchase.js
 import crypto from "crypto";
 
 export default async function handler(req, res) {
@@ -5,38 +6,25 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: "Método no permitido" });
   }
 
-  const { phone, firstName, lastName, email, amount, event_time, event_id } = req.body;
+  const { firstName, lastName, phone, amount, event_time } = req.body;
 
-  if (!amount || (!phone && !email)) {
-    return res.status(400).json({ message: "Faltan datos (teléfono o monto)" });
+  if (!amount || !phone || !firstName || !lastName) {
+    return res.status(400).json({ message: "Faltan datos requeridos" });
   }
 
   const PIXEL_ID = process.env.META_PIXEL_ID;
   const ACCESS_TOKEN = process.env.META_ACCESS_TOKEN;
 
   if (!PIXEL_ID || !ACCESS_TOKEN) {
-    return res.status(500).json({ message: "Variables de entorno no configuradas" });
+    return res.status(500).json({ message: "Faltan variables de entorno" });
   }
 
   try {
-    // 🔒 Hash de datos personales (SHA256)
-    const hashedPhone = phone
-      ? crypto.createHash("sha256").update(phone.trim()).digest("hex")
-      : null;
+    // Hash obligatorio para privacidad según normas de Meta
+    const hashedPhone = crypto.createHash("sha256").update(phone.trim()).digest("hex");
+    const hashedFirst = crypto.createHash("sha256").update(firstName.trim().toLowerCase()).digest("hex");
+    const hashedLast = crypto.createHash("sha256").update(lastName.trim().toLowerCase()).digest("hex");
 
-    const hashedEmail = email
-      ? crypto.createHash("sha256").update(email.trim().toLowerCase()).digest("hex")
-      : null;
-
-    const hashedFirstName = firstName
-      ? crypto.createHash("sha256").update(firstName.trim().toLowerCase()).digest("hex")
-      : null;
-
-    const hashedLastName = lastName
-      ? crypto.createHash("sha256").update(lastName.trim().toLowerCase()).digest("hex")
-      : null;
-
-    // 🧾 Cuerpo del evento enviado a Meta
     const payload = {
       data: [
         {
@@ -44,24 +32,22 @@ export default async function handler(req, res) {
           event_time: event_time
             ? Math.floor(new Date(event_time).getTime() / 1000)
             : Math.floor(Date.now() / 1000),
-          event_id: event_id || `manual_${Date.now()}`,
+          event_id: `manual_${Date.now()}`,
+          action_source: "website",
           user_data: {
-            ph: hashedPhone ? [hashedPhone] : [],
-            em: hashedEmail ? [hashedEmail] : [],
-            fn: hashedFirstName ? [hashedFirstName] : [],
-            ln: hashedLastName ? [hashedLastName] : [],
-            country: ["ar"], // todos los compradores desde Argentina
+            fn: [hashedFirst],
+            ln: [hashedLast],
+            ph: [hashedPhone],
           },
           custom_data: {
             currency: "ARS",
             value: parseFloat(amount),
           },
-          action_source: "website",
         },
       ],
     };
 
-    // 🚀 Envío a Meta Conversion API
+    // Enviar evento a Meta
     const response = await fetch(
       `https://graph.facebook.com/v19.0/${PIXEL_ID}/events?access_token=${ACCESS_TOKEN}`,
       {
@@ -72,18 +58,9 @@ export default async function handler(req, res) {
     );
 
     const data = await response.json();
-
-    // 📬 Respuesta al panel admin
-    return res.status(200).json({
-      success: true,
-      metaResponse: data,
-      sent_payload: payload,
-    });
+    return res.status(200).json({ success: true, metaResponse: data, payload });
   } catch (error) {
-    console.error("❌ Error enviando evento a Meta:", error);
-    return res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+    console.error("Error al enviar evento a Meta:", error);
+    return res.status(500).json({ success: false, error: error.message });
   }
 }

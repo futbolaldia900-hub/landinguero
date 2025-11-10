@@ -1,116 +1,271 @@
 <!DOCTYPE html>
+
 <html lang="es">
+
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Admin — Registrar Compra (Meta CAPI)</title>
-  <style>
-    body { font-family: Arial, sans-serif; background:#0b0b0b; color:#f2f2f2; display:flex; align-items:center; justify-content:center; height:100vh; margin:0; }
-    .card { background:#111; padding:20px; border-radius:10px; width:360px; box-shadow:0 8px 30px rgba(0,0,0,0.6); }
-    input, button { width:100%; padding:10px; margin:8px 0; border-radius:6px; border:1px solid #222; background:#0d0d0d; color:#fff; }
-    button { background:#1f8ef1; border:none; font-weight:700; cursor:pointer; }
-    button:disabled { opacity:0.6; cursor:not-allowed; }
-    #response { margin-top:10px; white-space:pre-wrap; font-size:0.9rem; }
-    .hint { font-size:0.85rem; color:#9aa; margin-bottom:8px; }
-    label { font-size:0.85rem; color:#cfd; display:block; margin-top:6px; }
-  </style>
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>🎰 Circo Online</title>
+
+
+
+    <meta name="facebook-domain-verification" content="o1hoq82czvz17489kpf7eb2sqc8ta1" />
+
+
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;600;700;900&family=Russo+One&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;600;700;900&family=Russo+One&display=swap" rel="stylesheet"></noscript>
+
+
+
+    <link rel="stylesheet" href="estilo.css">
+
+  <link rel="icon" type="image/png" href="img/favicon.png">
+
+
+
+    <script>
+
+    !function(f,b,e,v,n,t,s)
+
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+
+    n.queue=[];t=b.createElement(e);t.async=!0;
+
+    t.src=v;s=b.getElementsByTagName(e)[0];
+
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+
+    'https://connect.facebook.net/en_US/fbevents.js');
+
+    
+
+    fbq('init', '1946841772846486');
+
+    fbq('track', 'PageView');
+
+  </script>
+
+
+
 </head>
-<body>
-  <div class="card" role="main">
-    <h2 style="margin:0 0 10px 0;">Registrar Compra — CAPI</h2>
 
-    <p class="hint">Ingresá la <strong>clave administrativa</strong> </p>
+<body style="background-image: url('img/fondotrebol.png'); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;">
 
-    <label for="adminToken">Clave administrativa</label>
-    <input id="adminToken" type="password" autocomplete="off" placeholder="token" />
+  
 
-    <label for="nombre">Nombre</label>
-    <input id="nombre" type="text" placeholder="nombre" />
+  <h1 class="logo-text" id="logoContainer" style="visibility: visible;">
 
-    <label for="apellido">Apellido</label>
-    <input id="apellido" type="text" placeholder="apellido" />
+    <span class="logo-emoji">🎰</span>
 
-    <label for="phone">Teléfono (ej: +5491122334455)</label>
-    <input id="phone" type="text" placeholder="+5491122334455" />
+    <span class="logo-text-fill" id="casinoName" style="color: #00ff88; text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);">CIRCO ONLINE</span>
 
-    <label for="amount">Monto en ARS (ej: 26000)</label>
-    <input id="amount" type="number" placeholder="26000" />
+  </h1>
 
-    <label for="event_time">Fecha y hora (opcional)</label>
-    <input id="event_time" type="datetime-local" />
 
-    <button id="sendBtn">Enviar compra a Meta</button>
 
-    <div id="response" aria-live="polite"></div>
+  <div class="card" style="background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px);">
+
+    <div class="main-text">
+
+      <p style="font-family: 'Russo One', sans-serif; font-size: 1.2rem; color: #00ff88; text-transform: uppercase; margin-bottom: 15px;"><span style="font-size: 1.3rem;">🔥</span> JUGÁ Y GANÁ EN GRANDE <span style="font-size: 1.3rem;">🔥</span></p>
+
+      <p style="font-family: 'Poppins', sans-serif; font-size: 1.6rem; color: #FFD700; font-weight: 700; text-transform: uppercase;">RETIROS ILIMITADOS</p>
+
+    </div>
+
+
+
+    <button class="popup-button" id="whatsappButton">
+
+      <span>CREÁ TU USUARIO</span>
+
+      <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="white" viewBox="0 0 24 24">
+
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.149-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414-.074-.123-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+
+      </svg>
+
+    </button>
+
   </div>
 
-  <script>
-    const $ = id => document.getElementById(id);
-    const sendBtn = $('sendBtn');
-    const resp = $('response');
 
-    function validatePhone(p) {
-      if (!p) return false;
-      // Normaliza: solo dígitos y + al inicio opcional
-      const cleaned = p.trim();
-      // mínimo 7 dígitos
-      const digits = cleaned.replace(/\D/g, '');
-      return digits.length >= 7;
-    }
 
-    async function sendPurchase() {
-      resp.textContent = '';
-      const adminToken = $('adminToken').value.trim();
-      const nombre = $('nombre').value.trim();
-      const apellido = $('apellido').value.trim();
-      const phone = $('phone').value.trim();
-      const amount = $('amount').value.trim();
-      const event_time = $('event_time').value;
+  <div class="barra-juegos-slider" style="background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px);">
 
-      if (!adminToken) { resp.textContent = '🔒 Necesitás la clave administrativa.'; return; }
-      if (!nombre || !apellido || !phone || !amount) {
-        resp.textContent = '❌ Completa todos los campos obligatorios.';
-        return;
-      }
-      if (!validatePhone(phone)) { resp.textContent = '❌ Teléfono inválido.'; return; }
+    <div class="scroll-content">
 
-      sendBtn.disabled = true;
-      sendBtn.textContent = 'Enviando...';
+      <img src="img/game.pragmaticPlayGatesOfOlympus.thumbnail.512x512_v4.png" alt="Slots">
 
-      try {
-        const payload = { nombre, apellido, phone, amount, event_time };
-        const res = await fetch('/api/meta-purchase', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + adminToken
-          },
-          body: JSON.stringify(payload)
+      <img src="img/game.pragmaticPlayGoldParty.thumbnail.512x512_v3.png" alt="Ruleta">
+
+      <img src="img/game.pragmaticPlayJokersJewels.thumbnail.512x512_v3.png" alt="Cartas">
+
+      <img src="img/game.pragmaticPlaySweetBonanza.thumbnail.512x512_v4.png" alt="Deportes">
+
+      <img src="img/game.pragmaticPlayCongoCash.thumbnail.512x512_v3.png" alt="Jackpot">
+
+      <img src="img/game.mg9MasksOfFire.thumbnail.512x512_v3.png" alt="Bonus">
+
+            <img src="img/game.pragmaticPlayGatesOfOlympus.thumbnail.512x512_v4.png" alt="Slots">
+
+      <img src="img/game.pragmaticPlayGoldParty.thumbnail.512x512_v3.png" alt="Ruleta">
+
+      <img src="img/game.pragmaticPlayJokersJewels.thumbnail.512x512_v3.png" alt="Cartas">
+
+      <img src="img/game.pragmaticPlaySweetBonanza.thumbnail.512x512_v4.png" alt="Deportes">
+
+      <img src="img/game.pragmaticPlayCongoCash.thumbnail.512x512_v3.png" alt="Jackpot">
+
+      <img src="img/game.mg9MasksOfFire.thumbnail.512x512_v3.png" alt="Bonus">
+
+    </div>
+
+  </div>
+
+  
+
+  <div class="info-externa" style="background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2);">
+
+    <p id="minimoDeposito">Mínimo de carga: $1000</p>
+
+    <p>CIRCO EN VIVO - SLOTS - DEPORTIVAS</p>
+
+  </div>
+
+
+
+  <div class="metodos-pago" style="background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2);">
+
+    <h2 class="titulo-pago">MÉTODOS DE PAGO</h2>
+
+    <div class="iconos-pago">
+
+      <img src="img/8043680.png" alt="Mastercard">
+
+      <img src="img/Mercado Pago.png" alt="MercadoPago">
+
+      <img src="img/logo-large.png" alt="Rapipago">
+
+      <img src="img/logo-cuenta-dni.png" alt="Pago Fácil">
+
+    </div>
+
+  </div>
+
+
+
+    <script>
+
+  async function saveLead(data) {
+
+    await fetch("https://script.google.com/macros/s/AKfycby_otbdnM6_QZuYKMX9fMx-46qXM80b4UpNe19W8NKcDzFpRre27AtGp3w1OerPGBLF/exec", {
+
+      method: "POST",
+
+      body: JSON.stringify(data),
+
+      headers: { "Content-Type": "application/json" },
+
+    });
+
+  }
+
+
+
+  window.addEventListener("load", () => {
+
+    const urlParams = new URLSearchParams(window.location.search);
+
+    const fbc = urlParams.get("fbclid")
+
+      ? `fb.1.${Date.now()}.${urlParams.get("fbclid")}`
+
+      : "";
+
+
+
+    const leadData = {
+
+      lead_id: `LEAD-${Math.floor(Math.random() * 1000000)}`,
+
+      token: Math.random().toString(36).substring(2, 6).toUpperCase(),
+
+      fbc: fbc,
+
+    };
+
+
+
+    saveLead(leadData);
+
+  });
+
+  </script>
+
+
+
+    <script>
+
+    document.addEventListener('DOMContentLoaded', () => {
+
+      const whatsappButton = document.getElementById('whatsappButton');
+
+      if (whatsappButton) {
+
+        whatsappButton.addEventListener('click', () => {
+
+          
+
+          // 1. Generar un event_id único para este clic
+
+          // Se usa la hora + un nro aleatorio para asegurar que sea único
+
+          const eventID = 'contact_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
+
+
+
+          // 2. Disparar el Píxel de Meta (enviando el eventID)
+
+          if (typeof fbq !== 'undefined') {
+
+            // Se envía un objeto vacío {} como 3er parámetro (parámetros de evento)
+
+            // y el eventID como 4to parámetro (opciones de evento)
+
+            fbq('track', 'Contact', {}, {eventID: eventID});
+
+          }
+
+          
+
+          // 3. Redirigir al rotador (api/rotador.js)
+
+          // Se usa Date.now() para evitar el caché del navegador
+
+s         window.location.href = `/api/rotador?t=${Date.now()}`;
+
         });
 
-        const data = await res.json();
-        if (res.ok && data.success) {
-          resp.textContent = '✅ Compra enviada correctamente.\n\n' + JSON.stringify(data.metaResponse, null, 2);
-        } else {
-          resp.textContent = '❌ Error: ' + (data.error || data.message || JSON.stringify(data));
-        }
-      } catch (e) {
-        resp.textContent = '❌ Error de red o servidor: ' + e.message;
-      } finally {
-        sendBtn.disabled = false;
-        sendBtn.textContent = 'Enviar compra a Meta';
       }
-    }
 
-    sendBtn.addEventListener('click', sendPurchase);
-
-    // Atajo Enter para enviar
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        if (!sendBtn.disabled) sendPurchase();
-      }
     });
+
   </script>
+
 </body>
+
 </html>

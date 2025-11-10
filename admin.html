@@ -5,16 +5,71 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Admin — Registrar Compra (Meta CAPI) v2.0</title>
   <style>
-    body { font-family: Arial, sans-serif; background:#0b0b0b; color:#f2f2f2; display:flex; justify-content:center; padding: 20px 0; }
-    /* Estilos ajustados para más campos */
-    .card { background:#111; padding:20px; border-radius:10px; width:420px; box-shadow:0 8px 30px rgba(0,0,0,0.6); }
-    input, button { width:100%; padding:10px; margin:8px 0; border-radius:6px; border:1px solid #222; background:#0d0d0d; color:#fff; box-sizing: border-box; }
-    button { background:#1f8ef1; border:none; font-weight:700; cursor:pointer; }
-    button:disabled { opacity:0.6; cursor:not-allowed; }
-    #response { margin-top:10px; white-space:pre-wrap; font-size:0.9rem; word-break: break-all; }
-    .hint { font-size:0.85rem; color:#9aa; margin-bottom:8px; }
-    label { font-size:0.85rem; color:#cfd; display:block; margin-top:6px; }
-    .section-title { font-size: 0.9rem; color: #00ff88; margin-top: 20px; border-bottom: 1px solid #333; padding-bottom: 5px;}
+    body { 
+      font-family: Arial, sans-serif; 
+      background:#0b0b0b; 
+      color:#f2f2f2; 
+      display:flex; 
+      align-items:center; /* Centra verticalmente */
+      justify-content:center; /* Centra horizontalmente */
+      min-height:100vh; /* Asegura que ocupe toda la altura de la vista */
+      margin:0; 
+      padding: 20px; /* Un poco de padding para pantallas pequeñas */
+      box-sizing: border-box; /* Incluye padding en el ancho */
+    }
+    .card { 
+      background:#111; 
+      padding:20px; 
+      border-radius:10px; 
+      width:100%; /* Ocupa el 100% del ancho disponible */
+      max-width:420px; /* Pero no más de 420px */
+      box-shadow:0 8px 30px rgba(0,0,0,0.6); 
+      box-sizing: border-box; /* Incluye padding en el ancho */
+    }
+    input, button { 
+      width:100%; 
+      padding:10px; 
+      margin:8px 0; 
+      border-radius:6px; 
+      border:1px solid #222; 
+      background:#0d0d0d; 
+      color:#fff; 
+      box-sizing: border-box; /* Incluye padding en el ancho */
+    }
+    button { 
+      background:#1f8ef1; 
+      border:none; 
+      font-weight:700; 
+      cursor:pointer; 
+    }
+    button:disabled { 
+      opacity:0.6; 
+      cursor:not-allowed; 
+    }
+    #response { 
+      margin-top:10px; 
+      white-space:pre-wrap; 
+      font-size:0.9rem; 
+      word-break: break-all; 
+    }
+    .hint { 
+      font-size:0.85rem; 
+      color:#9aa; 
+      margin-bottom:8px; 
+    }
+    label { 
+      font-size:0.85rem; 
+      color:#cfd; 
+      display:block; 
+      margin-top:6px; 
+    }
+    .section-title { 
+      font-size: 0.9rem; 
+      color: #00ff88; 
+      margin-top: 20px; 
+      border-bottom: 1px solid #333; 
+      padding-bottom: 5px;
+    }
   </style>
 </head>
 <body>
@@ -42,7 +97,7 @@
     <input id="event_time" type="datetime-local" />
 
     <h3 class="section-title">Datos de Vinculación (EMQ 10/10)</h3>
-    <p class="hint">Sacar estos datos del Google Sheet</p>
+    <p class="hint">Sacar estos datos del Google Sheet donde se registran los "Contact".</p>
 
     <label for="click_id">Click ID (El código corto, ej: A9B3D)</label>
     <input id="click_id" type="text" placeholder="A9B3D" />

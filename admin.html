@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Admin — Registrar Compra (Meta CAPI) v2.2</title>
+  <title>Admin — Registrar Compra (Meta CAPI) v2.3</title>
   <style>
     body {
       font-family: 'Poppins', Arial, sans-serif;
@@ -168,10 +168,12 @@
     <label for="amount">Monto en ARS (ej: 26000)</label>
     <input id="amount" type="number" placeholder="26000" />
 
-    <label for="event_time">Fecha y hora (opcional)</label>
-    <input id="event_time" type="datetime-local" />
+    <div class="optional-section hidden" id="eventTimeField">
+      <label for="event_time">Fecha y hora (opcional)</label>
+      <input id="event_time" type="datetime-local" />
+    </div>
 
-    <div class="optional-section" id="anuncioFields">
+    <div class="optional-section hidden" id="anuncioFields">
       <h3 class="section-title">Datos de Vinculación (EMQ)</h3>
       <p class="hint">Solo si el cliente vino desde un anuncio</p>
 
@@ -197,12 +199,19 @@
     const sendBtn = $('sendBtn');
     const resp = $('response');
     const anuncioFields = $('anuncioFields');
+    const eventTimeField = $('eventTimeField');
     const modoOffline = $('modoOffline');
     const modoAnuncio = $('modoAnuncio');
 
     // Mostrar/ocultar campos según el modo
-    modoOffline.addEventListener('change', () => anuncioFields.classList.add('hidden'));
-    modoAnuncio.addEventListener('change', () => anuncioFields.classList.remove('hidden'));
+    modoOffline.addEventListener('change', () => {
+      anuncioFields.classList.add('hidden');
+      eventTimeField.classList.add('hidden');
+    });
+    modoAnuncio.addEventListener('change', () => {
+      anuncioFields.classList.remove('hidden');
+      eventTimeField.classList.remove('hidden');
+    });
 
     function validatePhone(p) {
       if (!p) return false;
@@ -219,7 +228,7 @@
       const apellido = $('apellido').value.trim();
       const phone = $('phone').value.trim();
       const amount = $('amount').value.trim();
-      const event_time = $('event_time').value;
+      const event_time = modoAnuncio.checked ? $('event_time').value : null;
       const click_id = $('click_id').value.trim();
       const event_id = $('event_id').value.trim();
       const fbp = $('fbp').value.trim();

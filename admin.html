@@ -1,116 +1,150 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Admin — Registrar Compra (Meta CAPI)</title>
-  <style>
-    body { font-family: Arial, sans-serif; background:#0b0b0b; color:#f2f2f2; display:flex; align-items:center; justify-content:center; height:100vh; margin:0; }
-    .card { background:#111; padding:20px; border-radius:10px; width:360px; box-shadow:0 8px 30px rgba(0,0,0,0.6); }
-    input, button { width:100%; padding:10px; margin:8px 0; border-radius:6px; border:1px solid #222; background:#0d0d0d; color:#fff; }
-    button { background:#1f8ef1; border:none; font-weight:700; cursor:pointer; }
-    button:disabled { opacity:0.6; cursor:not-allowed; }
-    #response { margin-top:10px; white-space:pre-wrap; font-size:0.9rem; }
-    .hint { font-size:0.85rem; color:#9aa; margin-bottom:8px; }
-    label { font-size:0.85rem; color:#cfd; display:block; margin-top:6px; }
-  </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin — Registrar Compra (Meta CAPI) v2.0</title>
+  <style>
+    body { font-family: Arial, sans-serif; background:#0b0b0b; color:#f2f2f2; display:flex; justify-content:center; padding: 20px 0; }
+    /* Estilos ajustados para más campos */
+    .card { background:#111; padding:20px; border-radius:10px; width:420px; box-shadow:0 8px 30px rgba(0,0,0,0.6); }
+    input, button { width:100%; padding:10px; margin:8px 0; border-radius:6px; border:1px solid #222; background:#0d0d0d; color:#fff; box-sizing: border-box; }
+    button { background:#1f8ef1; border:none; font-weight:700; cursor:pointer; }
+    button:disabled { opacity:0.6; cursor:not-allowed; }
+    #response { margin-top:10px; white-space:pre-wrap; font-size:0.9rem; word-break: break-all; }
+    .hint { font-size:0.85rem; color:#9aa; margin-bottom:8px; }
+    label { font-size:0.85rem; color:#cfd; display:block; margin-top:6px; }
+    .section-title { font-size: 0.9rem; color: #00ff88; margin-top: 20px; border-bottom: 1px solid #333; padding-bottom: 5px;}
+  </style>
 </head>
 <body>
-  <div class="card" role="main">
-    <h2 style="margin:0 0 10px 0;">Registrar Compra — CAPI</h2>
+  <div class="card" role="main">
+    <h2 style="margin:0 0 10px 0;">Registrar Compra — CAPI</h2>
 
-    <p class="hint">Ingresá la <strong>clave administrativa</strong> </p>
+    <p class="hint">Ingresá la <strong>clave administrativa</strong> </p>
+    <label for="adminToken">Clave administrativa</label>
+    <input id="adminToken" type="password" autocomplete="off" placeholder="token" />
 
-    <label for="adminToken">Clave administrativa</label>
-    <input id="adminToken" type="password" autocomplete="off" placeholder="token" />
+    <h3 class="section-title">Datos del Usuario</h3>
+    <label for="nombre">Nombre</label>
+    <input id="nombre" type="text" placeholder="nombre" />
 
-    <label for="nombre">Nombre</label>
-    <input id="nombre" type="text" placeholder="nombre" />
+    <label for="apellido">Apellido</label>
+    <input id="apellido" type="text" placeholder="apellido" />
 
-    <label for="apellido">Apellido</label>
-    <input id="apellido" type="text" placeholder="apellido" />
+    <label for="phone">Teléfono (ej: +5491122334455)</label>
+    <input id="phone" type="text" placeholder="+5491122334455" />
 
-    <label for="phone">Teléfono (ej: +5491122334455)</label>
-    <input id="phone" type="text" placeholder="+5491122334455" />
+    <label for="amount">Monto en ARS (ej: 26000)</label>
+    <input id="amount" type="number" placeholder="26000" />
 
-    <label for="amount">Monto en ARS (ej: 26000)</label>
-    <input id="amount" type="number" placeholder="26000" />
+    <label for="event_time">Fecha y hora (opcional)</label>
+    <input id="event_time" type="datetime-local" />
 
-    <label for="event_time">Fecha y hora (opcional)</label>
-    <input id="event_time" type="datetime-local" />
+    <h3 class="section-title">Datos de Vinculación (EMQ 10/10)</h3>
+    <p class="hint">Sacar estos datos del Google Sheet</p>
 
-    <button id="sendBtn">Enviar compra a Meta</button>
+    <label for="click_id">Click ID (El código corto, ej: A9B3D)</label>
+    <input id="click_id" type="text" placeholder="A9B3D" />
 
-    <div id="response" aria-live="polite"></div>
-  </div>
+    <label for="event_id">Event ID (El 'contact-ID', ej: contact-A9B3D)</label>
+    <input id="event_id" type="text" placeholder="contact-A9B3D" />
 
-  <script>
-    const $ = id => document.getElementById(id);
-    const sendBtn = $('sendBtn');
-    const resp = $('response');
+    <label for="fbp">FBP (Cookie de Navegador)</label>
+    <input id="fbp" type="text" placeholder="fb.1.1731269872.1234567890" />
 
-    function validatePhone(p) {
-      if (!p) return false;
-      // Normaliza: solo dígitos y + al inicio opcional
-      const cleaned = p.trim();
-      // mínimo 7 dígitos
-      const digits = cleaned.replace(/\D/g, '');
-      return digits.length >= 7;
-    }
+    <label for="fbc">FBC (Cookie de Clic, opcional)</label>
+    <input id="fbc" type="text" placeholder="fb.1.1731269872.TEST123" />
 
-    async function sendPurchase() {
-      resp.textContent = '';
-      const adminToken = $('adminToken').value.trim();
-      const nombre = $('nombre').value.trim();
-      const apellido = $('apellido').value.trim();
-      const phone = $('phone').value.trim();
-      const amount = $('amount').value.trim();
-      const event_time = $('event_time').value;
+    <button id="sendBtn">Enviar compra a Meta</button>
+    <div id="response" aria-live="polite"></div>
+  </div>
 
-      if (!adminToken) { resp.textContent = '🔒 Necesitás la clave administrativa.'; return; }
-      if (!nombre || !apellido || !phone || !amount) {
-        resp.textContent = '❌ Completa todos los campos obligatorios.';
-        return;
-      }
-      if (!validatePhone(phone)) { resp.textContent = '❌ Teléfono inválido.'; return; }
+  <script>
+    const $ = id => document.getElementById(id);
+    const sendBtn = $('sendBtn');
+    const resp = $('response');
 
-      sendBtn.disabled = true;
-      sendBtn.textContent = 'Enviando...';
+    function validatePhone(p) {
+      if (!p) return false;
+      const cleaned = p.trim();
+      const digits = cleaned.replace(/\D/g, '');
+      return digits.length >= 7;
+    }
 
-      try {
-        const payload = { nombre, apellido, phone, amount, event_time };
-        const res = await fetch('/api/meta-purchase', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + adminToken
-          },
-          body: JSON.stringify(payload)
-        });
+    async function sendPurchase() {
+      resp.textContent = '';
 
-        const data = await res.json();
-        if (res.ok && data.success) {
-          resp.textContent = '✅ Compra enviada correctamente.\n\n' + JSON.stringify(data.metaResponse, null, 2);
-        } else {
-          resp.textContent = '❌ Error: ' + (data.error || data.message || JSON.stringify(data));
-        }
-      } catch (e) {
-        resp.textContent = '❌ Error de red o servidor: ' + e.message;
-      } finally {
-        sendBtn.disabled = false;
-        sendBtn.textContent = 'Enviar compra a Meta';
-      }
-    }
+      // --- Recolectar TODOS los datos ---
+      const adminToken = $('adminToken').value.trim();
+      const nombre = $('nombre').value.trim();
+      const apellido = $('apellido').value.trim();
+      const phone = $('phone').value.trim();
+      const amount = $('amount').value.trim();
+      const event_time = $('event_time').value;
+      
+      // --- Nuevos campos de EMQ ---
+      const click_id = $('click_id').value.trim();
+      const event_id = $('event_id').value.trim();
+      const fbp = $('fbp').value.trim();
+      const fbc = $('fbc').value.trim();
 
-    sendBtn.addEventListener('click', sendPurchase);
+      if (!adminToken) { resp.textContent = '🔒 Necesitás la clave administrativa.'; return; }
+      // Validar campos obligatorios
+      if (!nombre || !apellido || !phone || !amount || !event_id || !fbp) {
+        resp.textContent = '❌ Completa todos los campos obligatorios (Nombre, Apellido, Tel, Monto, Event ID, FBP).';
+        return;
+      }
+      if (!validatePhone(phone)) { resp.textContent = '❌ Teléfono inválido.'; return; }
 
-    // Atajo Enter para enviar
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        if (!sendBtn.disabled) sendPurchase();
-      }
-    });
-  </script>
+      sendBtn.disabled = true;
+      sendBtn.textContent = 'Enviando...';
+
+      try {
+        // --- Crear el payload completo ---
+        const payload = { 
+          nombre, 
+          apellido, 
+          phone, 
+          amount, 
+          event_time,
+          click_id, // enviado para logging
+          event_id, // enviado para deduplicación
+          fbp,      // enviado para EMQ
+          fbc       // enviado para EMQ
+        };
+        
+        const res = await fetch('/api/meta-purchase', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + adminToken
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (res.ok && data.success) {
+          resp.textContent = '✅ Compra enviada correctamente.\n\n' + JSON.stringify(data.metaResponse, null, 2);
+        } else {
+          resp.textContent = '❌ Error: ' + (data.error || data.message || JSON.stringify(data));
+        }
+      } catch (e) {
+        resp.textContent = '❌ Error de red o servidor: ' + e.message;
+      } finally {
+        sendBtn.disabled = false;
+        sendBtn.textContent = 'Enviar compra a Meta';
+      }
+    }
+
+    sendBtn.addEventListener('click', sendPurchase);
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.target.matches('textarea')) {
+        e.preventDefault();
+        if (!sendBtn.disabled) sendPurchase();
+      }
+    });
+  </script>
 </body>
 </html>

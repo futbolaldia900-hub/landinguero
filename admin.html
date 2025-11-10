@@ -4,8 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Admin — Registrar Compra (Meta CAPI)</title>
-  <style>
-    /* --- INICIO DE ESTILOS CORREGIDOS (Basado en tu CSS antiguo) --- */
+  
+    <style>
     body { 
       font-family: Arial, sans-serif; 
       background:#0b0b0b; 
@@ -13,30 +13,30 @@
       display:flex; 
       align-items:center; 
       justify-content:center; 
-      min-height:100vh; /* Usar min-height para que se ajuste si el contenido crece */
+      min-height:100vh; /* min-height para scrolling */
       margin:0; 
-      padding: 20px; /* Añadir padding por si el formulario es muy alto */
+      padding: 20px 0; /* Padding vertical por si el form es muy alto */
       box-sizing: border-box;
     }
     .card { 
       background:#111; 
-      padding:25px; /* Un poco más de padding */
+      padding:25px; 
       border-radius:10px; 
-      width:100%; /* Ancho 100% */
-      max-width:450px; /* Aumentado a 450px para los nuevos campos */
+      width: 450px; /* ANCHO AUMENTADO para los nuevos campos */
+      max-width: 95%; /* Responsive */
       box-shadow:0 8px 30px rgba(0,0,0,0.6); 
       box-sizing: border-box;
     }
     input, button { 
       width:100%; 
-      padding:12px; /* Más padding */
-      margin:8px 0 16px 0; /* Más margen inferior */
+      padding:12px; 
+      margin:8px 0 16px 0; 
       border-radius:6px; 
-      border:1px solid #333; /* Borde más visible */
+      border:1px solid #333; 
       background:#0d0d0d; 
       color:#fff; 
       font-size: 1rem;
-      box-sizing: border-box;
+      box-sizing: border-box; /* Importante */
     }
     input::placeholder {
       color: #777;
@@ -45,14 +45,11 @@
       background:#1f8ef1; 
       border:none; 
       font-weight:700; 
-      cursor:pointer;
+      cursor:pointer; 
       margin-top: 15px;
       margin-bottom: 0;
     }
-    button:disabled { 
-      opacity:0.6; 
-      cursor:not-allowed; 
-    }
+    button:disabled { opacity:0.6; cursor:not-allowed; }
     #response { 
       margin-top:15px; 
       white-space:pre-wrap; 
@@ -63,18 +60,14 @@
       padding: 10px;
       border-radius: 6px;
     }
-    .hint { 
-      font-size:0.85rem; 
-      color:#9aa; 
-      margin-bottom:8px; 
-    }
+    .hint { font-size:0.85rem; color:#9aa; margin-bottom:8px; }
     label { 
       font-size:0.85rem; 
       color:#cfd; 
       display:block; 
-      margin-top:12px; /* Más margen superior para 'label' */
+      margin-top:12px; 
     }
-    /* --- Estilo para los nuevos títulos de sección --- */
+    /* Estilo añadido para los títulos verdes */
     .section-title { 
       font-size: 0.9rem; 
       color: #00ff88; 
@@ -86,11 +79,11 @@
     h2 {
       margin: 0 0 10px 0;
     }
-    /* --- FIN DE ESTILOS CORREGIDOS --- */
   </style>
 </head>
 <body>
-  <div class="card" role="main">
+  
+    <div class="card" role="main">
     <h2 style="margin:0 0 10px 0;">Registrar Compra — CAPI</h2>
 
     <p class="hint">Ingresá la <strong>clave administrativa</strong>.</p>
@@ -133,8 +126,8 @@
     <div id="response" aria-live="polite"></div>
   </div>
 
+  script
   <script>
-    /* --- El SCRIPT de funcionalidad (sin cambios) --- */
     const $ = id => document.getElementById(id);
     const sendBtn = $('sendBtn');
     const resp = $('response');
@@ -159,7 +152,7 @@
       const fbp = $('fbp').value.trim();
       const fbc = $('fbc').value.trim();
 
-_      if (!adminToken) { resp.textContent = '🔒 Necesitás la clave administrativa.'; return; }
+      if (!adminToken) { resp.textContent = '🔒 Necesitás la clave administrativa.'; return; }
       if (!nombre || !apellido || !phone || !amount || !event_id || !fbp) {
         resp.textContent = '❌ Completa todos los campos obligatorios (Nombre, Apellido, Tel, Monto, Event ID, FBP).';
         return;
@@ -201,7 +194,7 @@ _      if (!adminToken) { resp.textContent = '🔒 Necesitás la clave admini
     sendBtn.addEventListener('click', sendPurchase);
 
     document.addEventListener('keydown', e => {
-      if (e.key === 'Enter' && !e.target.matches('textarea')) {
+D      if (e.key === 'Enter' && !e.target.matches('textarea')) { // 'textarea' check es buena práctica
         e.preventDefault();
         if (!sendBtn.disabled) sendPurchase();
       }

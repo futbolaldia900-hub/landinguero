@@ -8,23 +8,17 @@
   <!-- META DE VERIFICACIÓN DE DOMINIO DE META -->
   <meta name="facebook-domain-verification" content="o1hoq82czvz17489kpf7eb2sqc8ta1" />
 
-  <!--
-    OPTIMIZACIÓN DE FUENTES:
-    1. Pre-conectar al servidor de fuentes para ahorrar tiempo.
-    2. Cargar el CSS de las fuentes de forma "asíncrona" (no bloqueante)
-       usando 'rel="preload"' y 'onload'.
-  -->
+  <!-- FUENTES -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;600;700;900&family=Russo+One&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;600;700;900&family=Russo+One&display=swap" rel="stylesheet"></noscript>
 
-  <!-- El CSS local se carga normalmente -->
+  <!-- CSS -->
   <link rel="stylesheet" href="estilo.css">
-  
   <link rel="icon" type="image/png" href="img/favicon.png">
 
-  <!-- PIXEL DE META -->
+  <!-- PIXEL META -->
   <script>
     !function(f,b,e,v,n,t,s)
     {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -38,8 +32,8 @@
     fbq('init', '1946841772846486');
     fbq('track', 'PageView');
   </script>
-
 </head>
+
 <body style="background-image: url('img/fondotrebol.png'); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;">
   
   <h1 class="logo-text" id="logoContainer" style="visibility: visible;">
@@ -94,22 +88,57 @@
     </div>
   </div>
 
+  <!-- NUEVO SCRIPT FUNCIONAL -->
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const whatsappButton = document.getElementById('whatsappButton');
-      if (whatsappButton) {
-        whatsappButton.addEventListener('click', () => {
-          const waNumber = '5492236735372';
-          const waMessage = encodeURIComponent('Hola, quiero más información');
-          const whatsappUrl = `https://wa.me/${waNumber}?text=${waMessage}`;
-          
-          if (typeof fbq !== 'undefined') {
-            fbq('track', 'Contact');
-          }
-          
-          window.open(whatsappUrl, '_blank');
-        });
+    const WHATSAPP_NUMBER = "5492236735372";
+    const SHEET_URL = "https://script.google.com/macros/s/AKfycbwyADs1Mu32qEnFhwV4ySNK6Uaa3WzaCkDU_o3xFnhgMvXxvZcE3Pps6EGRguwyFhqq/exec";
+
+    function getCookie(name) {
+      const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
+      return match ? match[2] : "";
+    }
+
+    function generateShortID() {
+      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+      let id = "";
+      for (let i = 0; i < 5; i++) id += chars.charAt(Math.floor(Math.random() * chars.length));
+      return id;
+    }
+
+    async function handleWhatsAppClick(event) {
+      event?.preventDefault?.();
+
+      const fbp = getCookie("_fbp");
+      const fbc = getCookie("_fbc") || 
+        (window.location.search.match(/fbclid=([^&]+)/) ? "fb.1." + Date.now() + "." + RegExp.$1 : "");
+
+      const click_id = generateShortID();
+      const event_id = "contact-" + click_id;
+      const timestamp = new Date().toISOString();
+
+      if (typeof fbq !== "undefined") {
+        try { fbq("track", "Contact", {}, { eventID: event_id }); } catch(e) {}
       }
+
+      try {
+        await fetch(SHEET_URL, {
+          method: "POST",
+          mode: "no-cors",
+          cache: "no-cache",
+          headers: { "Content-Type": "text/plain;charset=UTF-8" },
+          body: JSON.stringify({ click_id, fbp, fbc, event_id, timestamp })
+        });
+      } catch (err) {
+        console.warn("Error aparente en fetch:", err);
+      }
+
+      const message = `Hola, quiero crear mi usuario. Mi código es ${click_id}`;
+      window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, "_blank");
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const btn = document.getElementById("whatsappButton");
+      if (btn) btn.addEventListener("click", handleWhatsAppClick);
     });
   </script>
 </body>

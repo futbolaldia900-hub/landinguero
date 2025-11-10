@@ -3,83 +3,79 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Admin — Registrar Compra (Meta CAPI) v2.0</title>
+  <title>Admin — Registrar Compra (Meta CAPI)</title>
   <style>
-    /* ----- ESTILOS CORREGIDOS ----- */
-    html, body { 
-      height: 100%; /* Asegura que el body ocupe el 100% */
-      margin: 0;
-      padding: 0;
-    }
+    /* --- INICIO DE ESTILOS CORREGIDOS (Basado en tu CSS antiguo) --- */
     body { 
-      font-family: Arial, sans-serif; 
-      background:#0b0b0b; 
-      color:#f2f2f2; 
-      display:flex; 
-      align-items:center; /* Centra verticalmente */
-      justify-content:center; /* Centra horizontalmente */
-      min-height:100%; /* Ocupa al menos toda la altura de la vista */
-      padding: 20px; /* Padding para que no se pegue a los bordes */
-      box-sizing: border-box; 
-    }
+      font-family: Arial, sans-serif; 
+      background:#0b0b0b; 
+      color:#f2f2f2; 
+      display:flex; 
+      align-items:center; 
+      justify-content:center; 
+      min-height:100vh; /* Usar min-height para que se ajuste si el contenido crece */
+      margin:0; 
+      padding: 20px; /* Añadir padding por si el formulario es muy alto */
+      box-sizing: border-box;
+    }
     .card { 
-      background:#111; 
-      padding: 25px; /* Más padding para que se vea mejor */
-      border-radius:10px; 
-      width:100%; /* Ocupa el 100% del ancho disponible */
-      max-width:450px; /* Pero no más de 450px */
-      box-shadow:0 8px 30px rgba(0,0,0,0.6); 
-      box-sizing: border-box; 
-    }
+      background:#111; 
+      padding:25px; /* Un poco más de padding */
+      border-radius:10px; 
+      width:100%; /* Ancho 100% */
+      max-width:450px; /* Aumentado a 450px para los nuevos campos */
+      box-shadow:0 8px 30px rgba(0,0,0,0.6); 
+      box-sizing: border-box;
+    }
     input, button { 
-      width:100%; 
-      padding: 12px; /* Un poco más de padding */
-      margin: 8px 0 16px 0; /* Más margen inferior */
-      border-radius:6px; 
-      border:1px solid #333; /* Borde un poco más visible */
-      background:#0d0d0d; 
-      color:#fff; 
-      box-sizing: border-box; 
-      font-size: 1rem;
-    }
+      width:100%; 
+      padding:12px; /* Más padding */
+      margin:8px 0 16px 0; /* Más margen inferior */
+      border-radius:6px; 
+      border:1px solid #333; /* Borde más visible */
+      background:#0d0d0d; 
+      color:#fff; 
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
     input::placeholder {
       color: #777;
     }
     button { 
-      background:#1f8ef1; /* Botón azul */
-      border:none; 
-      font-weight:700; 
-      cursor:pointer; 
-      margin-top: 15px; /* Margen superior para el botón */
+      background:#1f8ef1; 
+      border:none; 
+      font-weight:700; 
+      cursor:pointer;
+      margin-top: 15px;
       margin-bottom: 0;
-    }
+    }
     button:disabled { 
-      opacity:0.6; 
-      cursor:not-allowed; 
-    }
+      opacity:0.6; 
+      cursor:not-allowed; 
+    }
     #response { 
-      margin-top:15px; 
-      white-space:pre-wrap; 
-      font-size:0.9rem; 
-      word-break: break-all;
+      margin-top:15px; 
+      white-space:pre-wrap; 
+      font-size:0.9rem; 
+      word-break: break-all;
       background-color: #0d0d0d;
       border: 1px solid #333;
       padding: 10px;
       border-radius: 6px;
-    }
+    }
     .hint { 
-      font-size:0.85rem; 
-      color:#9aa; 
-      margin: 0 0 8px 0;
-      line-height: 1.4;
-    }
+      font-size:0.85rem; 
+      color:#9aa; 
+      margin-bottom:8px; 
+    }
     label { 
-      font-size:0.85rem; 
-      color:#cfd; 
-      display:block; 
-      margin-top: 12px;
-    }
-    .section-title { 
+      font-size:0.85rem; 
+      color:#cfd; 
+      display:block; 
+      margin-top:12px; /* Más margen superior para 'label' */
+    }
+    /* --- Estilo para los nuevos títulos de sección --- */
+    .section-title { 
       font-size: 0.9rem; 
       color: #00ff88; 
       margin-top: 25px; 
@@ -90,11 +86,12 @@
     h2 {
       margin: 0 0 10px 0;
     }
+    /* --- FIN DE ESTILOS CORREGIDOS --- */
   </style>
 </head>
 <body>
   <div class="card" role="main">
-    <h2>Registrar Compra — CAPI</h2>
+    <h2 style="margin:0 0 10px 0;">Registrar Compra — CAPI</h2>
 
     <p class="hint">Ingresá la <strong>clave administrativa</strong>.</p>
     <label for="adminToken">Clave administrativa</label>
@@ -132,11 +129,12 @@
     <input id="fbc" type="text" placeholder="fb.1.1731269872.TEST123" />
 
     <button id="sendBtn">Enviar compra a Meta</button>
+
     <div id="response" aria-live="polite"></div>
   </div>
 
   <script>
-    // El código Javascript es el mismo, no necesita cambios.
+    /* --- El SCRIPT de funcionalidad (sin cambios) --- */
     const $ = id => document.getElementById(id);
     const sendBtn = $('sendBtn');
     const resp = $('response');
@@ -161,7 +159,7 @@
       const fbp = $('fbp').value.trim();
       const fbc = $('fbc').value.trim();
 
-      if (!adminToken) { resp.textContent = '🔒 Necesitás la clave administrativa.'; return; }
+_      if (!adminToken) { resp.textContent = '🔒 Necesitás la clave administrativa.'; return; }
       if (!nombre || !apellido || !phone || !amount || !event_id || !fbp) {
         resp.textContent = '❌ Completa todos los campos obligatorios (Nombre, Apellido, Tel, Monto, Event ID, FBP).';
         return;

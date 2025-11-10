@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Admin — Registrar Compra (Meta CAPI) v2.1</title>
+  <title>Admin — Registrar Compra (Meta CAPI) v2.2</title>
   <style>
     body {
       font-family: 'Poppins', Arial, sans-serif;
@@ -104,6 +104,38 @@
       word-break: break-all;
       color: #ccc;
     }
+
+    .mode-toggle {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #111;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      padding: 8px 10px;
+      gap: 8px;
+      border: 1px solid #222;
+    }
+
+    .mode-toggle label {
+      margin: 0;
+      font-size: 0.85rem;
+      color: #ccc;
+      cursor: pointer;
+    }
+
+    .mode-toggle input[type="radio"] {
+      accent-color: #00ff88;
+      cursor: pointer;
+    }
+
+    .optional-section {
+      transition: all 0.3s ease;
+    }
+
+    .hidden {
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -113,6 +145,14 @@
 
     <label for="adminToken">Clave administrativa</label>
     <input id="adminToken" type="password" autocomplete="off" placeholder="token" />
+
+    <div class="mode-toggle">
+      <input type="radio" id="modoOffline" name="modo" value="offline" checked />
+      <label for="modoOffline">🖤 Modo Offline</label>
+
+      <input type="radio" id="modoAnuncio" name="modo" value="anuncio" />
+      <label for="modoAnuncio">💚 Modo Anuncio</label>
+    </div>
 
     <h3 class="section-title">Datos del Usuario</h3>
 
@@ -131,20 +171,22 @@
     <label for="event_time">Fecha y hora (opcional)</label>
     <input id="event_time" type="datetime-local" />
 
-    <h3 class="section-title">Datos de Vinculación (Opcionales)</h3>
-    <p class="hint">Podés dejar en blanco si no tenés estos datos</p>
+    <div class="optional-section" id="anuncioFields">
+      <h3 class="section-title">Datos de Vinculación (EMQ)</h3>
+      <p class="hint">Solo si el cliente vino desde un anuncio</p>
 
-    <label for="click_id">Click ID (código corto, ej: A9B3D)</label>
-    <input id="click_id" type="text" placeholder="A9B3D" />
+      <label for="click_id">Click ID (ej: A9B3D)</label>
+      <input id="click_id" type="text" placeholder="A9B3D" />
 
-    <label for="event_id">Event ID (ej: contact-A9B3D)</label>
-    <input id="event_id" type="text" placeholder="contact-A9B3D" />
+      <label for="event_id">Event ID (ej: contact-A9B3D)</label>
+      <input id="event_id" type="text" placeholder="contact-A9B3D" />
 
-    <label for="fbp">FBP (Cookie de Navegador)</label>
-    <input id="fbp" type="text" placeholder="fb.1.1731269872.1234567890" />
+      <label for="fbp">FBP (Cookie de Navegador)</label>
+      <input id="fbp" type="text" placeholder="fb.1.1731269872.1234567890" />
 
-    <label for="fbc">FBC (Cookie de Clic, opcional)</label>
-    <input id="fbc" type="text" placeholder="fb.1.1731269872.TEST123" />
+      <label for="fbc">FBC (Cookie de Clic, opcional)</label>
+      <input id="fbc" type="text" placeholder="fb.1.1731269872.TEST123" />
+    </div>
 
     <button id="sendBtn">Enviar compra a Meta</button>
     <div id="response" aria-live="polite"></div>
@@ -154,6 +196,13 @@
     const $ = id => document.getElementById(id);
     const sendBtn = $('sendBtn');
     const resp = $('response');
+    const anuncioFields = $('anuncioFields');
+    const modoOffline = $('modoOffline');
+    const modoAnuncio = $('modoAnuncio');
+
+    // Mostrar/ocultar campos según el modo
+    modoOffline.addEventListener('change', () => anuncioFields.classList.add('hidden'));
+    modoAnuncio.addEventListener('change', () => anuncioFields.classList.remove('hidden'));
 
     function validatePhone(p) {
       if (!p) return false;
@@ -176,18 +225,17 @@
       const fbp = $('fbp').value.trim();
       const fbc = $('fbc').value.trim();
 
-      // --- Validaciones obligatorias ---
-      if (!adminToken) { 
-        resp.textContent = '🔒 Necesitás la clave administrativa.'; 
-        return; 
+      if (!adminToken) {
+        resp.textContent = '🔒 Necesitás la clave administrativa.';
+        return;
       }
       if (!nombre || !apellido || !phone || !amount) {
         resp.textContent = '❌ Completa los campos obligatorios (Nombre, Apellido, Teléfono, Monto).';
         return;
       }
-      if (!validatePhone(phone)) { 
-        resp.textContent = '❌ Teléfono inválido.'; 
-        return; 
+      if (!validatePhone(phone)) {
+        resp.textContent = '❌ Teléfono inválido.';
+        return;
       }
 
       sendBtn.disabled = true;

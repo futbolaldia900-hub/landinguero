@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Admin — Registrar Compra (Meta CAPI) v2.0</title>
+  <title>Admin — Registrar Compra (Meta CAPI) v2.1</title>
   <style>
     body {
       font-family: 'Poppins', Arial, sans-serif;
@@ -131,8 +131,8 @@
     <label for="event_time">Fecha y hora (opcional)</label>
     <input id="event_time" type="datetime-local" />
 
-    <h3 class="section-title">Datos de Vinculación (EMQ 10/10)</h3>
-    <p class="hint">Sacar estos datos del Google Sheet</p>
+    <h3 class="section-title">Datos de Vinculación (Opcionales)</h3>
+    <p class="hint">Podés dejar en blanco si no tenés estos datos</p>
 
     <label for="click_id">Click ID (código corto, ej: A9B3D)</label>
     <input id="click_id" type="text" placeholder="A9B3D" />
@@ -176,12 +176,19 @@
       const fbp = $('fbp').value.trim();
       const fbc = $('fbc').value.trim();
 
-      if (!adminToken) { resp.textContent = '🔒 Necesitás la clave administrativa.'; return; }
-      if (!nombre || !apellido || !phone || !amount || !event_id || !fbp) {
-        resp.textContent = '❌ Completa todos los campos obligatorios (Nombre, Apellido, Tel, Monto, Event ID, FBP).';
+      // --- Validaciones obligatorias ---
+      if (!adminToken) { 
+        resp.textContent = '🔒 Necesitás la clave administrativa.'; 
+        return; 
+      }
+      if (!nombre || !apellido || !phone || !amount) {
+        resp.textContent = '❌ Completa los campos obligatorios (Nombre, Apellido, Teléfono, Monto).';
         return;
       }
-      if (!validatePhone(phone)) { resp.textContent = '❌ Teléfono inválido.'; return; }
+      if (!validatePhone(phone)) { 
+        resp.textContent = '❌ Teléfono inválido.'; 
+        return; 
+      }
 
       sendBtn.disabled = true;
       sendBtn.textContent = 'Enviando...';

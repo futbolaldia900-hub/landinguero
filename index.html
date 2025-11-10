@@ -5,21 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>🎰 Circo Online</title>
 
-  <!-- META DE VERIFICACIÓN DE DOMINIO DE META -->
-  <meta name="facebook-domain-verification" content="o1hoq82czvz17489kpf7eb2sqc8ta1" />
+    <meta name="facebook-domain-verification" content="o1hoq82czvz17489kpf7eb2sqc8ta1" />
 
-  <!-- OPTIMIZACIÓN DE FUENTES -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;600;700;900&family=Russo+One&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;600;700;900&family=Russo+One&display=swap" rel="stylesheet"></noscript>
 
-  <!-- CSS -->
-  <link rel="stylesheet" href="estilo.css">
+    <link rel="stylesheet" href="estilo.css">
   <link rel="icon" type="image/png" href="img/favicon.png">
 
-  <!-- PIXEL DE META -->
-  <script>
+    <script>
     !function(f,b,e,v,n,t,s)
     {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
     n.callMethod.apply(n,arguments):n.queue.push(arguments)};
@@ -63,13 +59,12 @@
       <img src="img/game.pragmaticPlaySweetBonanza.thumbnail.512x512_v4.png" alt="Deportes">
       <img src="img/game.pragmaticPlayCongoCash.thumbnail.512x512_v3.png" alt="Jackpot">
       <img src="img/game.mg9MasksOfFire.thumbnail.512x512_v3.png" alt="Bonus">
-      <!-- segundo set -->
-      <img src="img/game.pragmaticPlayGatesOfOlympus.thumbnail.512x512_v4.png" alt="Slots">
+            <img src="img/game.pragmaticPlayGatesOfOlympus.thumbnail.512x512_v4.png" alt="Slots">
       <img src="img/game.pragmaticPlayGoldParty.thumbnail.512x512_v3.png" alt="Ruleta">
       <img src="img/game.pragmaticPlayJokersJewels.thumbnail.512x512_v3.png" alt="Cartas">
       <img src="img/game.pragmaticPlaySweetBonanza.thumbnail.512x512_v4.png" alt="Deportes">
       <img src="img/game.pragmaticPlayCongoCash.thumbnail.512x512_v3.png" alt="Jackpot">
-static     <img src="img/game.mg9MasksOfFire.thumbnail.512x512_v3.png" alt="Bonus">
+      <img src="img/game.mg9MasksOfFire.thumbnail.512x512_v3.png" alt="Bonus">
     </div>
   </div>
   
@@ -83,13 +78,12 @@ static     <img src="img/game.mg9MasksOfFire.thumbnail.512x512_v3.png" alt="Bo
     <div class="iconos-pago">
       <img src="img/8043680.png" alt="Mastercard">
       <img src="img/Mercado Pago.png" alt="MercadoPago">
-  	  <img src="img/logo-large.png" alt="Rapipago">
+      <img src="img/logo-large.png" alt="Rapipago">
       <img src="img/logo-cuenta-dni.png" alt="Pago Fácil">
     </div>
   </div>
 
-  <!-- SCRIPT PARA GUARDAR LEAD AUTOMÁTICAMENTE -->
-  <script>
+    <script>
   async function saveLead(data) {
     await fetch("https://script.google.com/macros/s/AKfycby_otbdnM6_QZuYKMX9fMx-46qXM80b4UpNe19W8NKcDzFpRre27AtGp3w1OerPGBLF/exec", {
       method: "POST",
@@ -114,21 +108,26 @@ static     <img src="img/game.mg9MasksOfFire.thumbnail.512x512_v3.png" alt="Bo
   });
   </script>
 
-  <!-- BOTÓN WHATSAPP (ACTUALIZADO) -->
-  <script>
+    <script>
     document.addEventListener('DOMContentLoaded', () => {
       const whatsappButton = document.getElementById('whatsappButton');
-á     if (whatsappButton) {
+      if (whatsappButton) {
         whatsappButton.addEventListener('click', () => {
           
-          // 1. Disparar el Píxel de Meta
+          // 1. Generar un event_id único para este clic
+          // Se usa la hora + un nro aleatorio para asegurar que sea único
+          const eventID = 'contact_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
+
+          // 2. Disparar el Píxel de Meta (enviando el eventID)
           if (typeof fbq !== 'undefined') {
-            fbq('track', 'Contact');
+            // Se envía un objeto vacío {} como 3er parámetro (parámetros de evento)
+            // y el eventID como 4to parámetro (opciones de evento)
+            fbq('track', 'Contact', {}, {eventID: eventID});
           }
           
-          // 2. Redirigir al rotador (nuevo .js)
+          // 3. Redirigir al rotador (api/rotador.js)
           // Se usa Date.now() para evitar el caché del navegador
-          window.location.href = `/api/rotador?t=${Date.now()}`;
+s         window.location.href = `/api/rotador?t=${Date.now()}`;
         });
       }
     });

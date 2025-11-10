@@ -1,11 +1,9 @@
-// api/rotador.cjs - Nuevo archivo con sintaxis CommonJS
-
-// Importante: Usamos 'module.exports' en lugar de 'export default'
-module.exports = (request, response) => {
+export default function handler(request, response) {
 
   // 1. Tu lista de números de WhatsApp
+  // Puedes agregar más números a esta lista
   const misLineas = [
-    '5492236735372', 
+    '5492236735372',
   ];
 
   // 2. Lógica de elección: Elegir un número al azar
@@ -18,6 +16,6 @@ module.exports = (request, response) => {
   const urlFinal = `https://wa.me/${lineaElegida}?text=${mensaje}`;
 
   // 5. Redirigir al usuario (código 307)
-  response.writeHead(307, { Location: urlFinal });
-  response.end();
-};
+  // Usamos el método .redirect() de Vercel
+  response.redirect(307, urlFinal);
+}

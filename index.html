@@ -88,10 +88,11 @@
     </div>
   </div>
 
-  <!-- NUEVO SCRIPT FUNCIONAL -->
+  <!-- SCRIPT MEJORADO -->
   <script>
     const WHATSAPP_NUMBER = "5492236735372";
     const SHEET_URL = "https://script.google.com/macros/s/AKfycbwyADs1Mu32qEnFhwV4ySNK6Uaa3WzaCkDU_o3xFnhgMvXxvZcE3Pps6EGRguwyFhqq/exec";
+    const CLICK_ID_LIFETIME_MS = 5 * 60 * 1000; // 5 minutos
 
     function getCookie(name) {
       const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
@@ -105,6 +106,22 @@
       return id;
     }
 
+    function getOrCreateClickID() {
+      const stored = sessionStorage.getItem("click_info");
+      const now = Date.now();
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          if (now - parsed.timestamp < CLICK_ID_LIFETIME_MS) {
+            return parsed.click_id;
+          }
+        } catch {}
+      }
+      const newClick = { click_id: generateShortID(), timestamp: now };
+      sessionStorage.setItem("click_info", JSON.stringify(newClick));
+      return newClick.click_id;
+    }
+
     async function handleWhatsAppClick(event) {
       event?.preventDefault?.();
 
@@ -112,7 +129,7 @@
       const fbc = getCookie("_fbc") || 
         (window.location.search.match(/fbclid=([^&]+)/) ? "fb.1." + Date.now() + "." + RegExp.$1 : "");
 
-      const click_id = generateShortID();
+      const click_id = getOrCreateClickID();
       const event_id = "contact-" + click_id;
       const timestamp = new Date().toISOString();
 
@@ -124,15 +141,14 @@
         await fetch(SHEET_URL, {
           method: "POST",
           mode: "no-cors",
-          cache: "no-cache",
           headers: { "Content-Type": "text/plain;charset=UTF-8" },
           body: JSON.stringify({ click_id, fbp, fbc, event_id, timestamp })
         });
       } catch (err) {
-        console.warn("Error aparente en fetch:", err);
+        console.warn("Error en fetch:", err);
       }
 
-      const message = `Hola, quiero crear mi usuario. Mi código es ${click_id}`;
+      const message = `Hola, quiero registrarme. Mi código es ${click_id}`;
       window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, "_blank");
     }
 

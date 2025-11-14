@@ -38,7 +38,6 @@ body::before {
   to { filter: hue-rotate(360deg); }
 }
 
-
 .logo-text {
   font-family: 'Bebas Neue', cursive;
   font-size: 5rem;
@@ -75,7 +74,6 @@ body::before {
     0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
-
 .card {
   background: #000000;
   backdrop-filter: none;
@@ -108,7 +106,6 @@ body::before {
 }
 
 .typing .emoji {
-  /* Los emojis mantienen su color original */
   -webkit-text-fill-color: initial;
   display: inline-block;
   font-size: 1.3rem;
@@ -203,7 +200,6 @@ body::before {
   0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
   100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
 }
-
 
 .popup-button:hover {
   transform: scale(1.08);
@@ -399,5 +395,18 @@ body::before {
   .typing {
     font-size: 1rem;
     letter-spacing: 0;
+  }
+}
+
+/* 📌 FIX PARA QUE "IMPERIO ESMERALDA" QUEDE EN UNA SOLA LÍNEA EN MÓVILES */
+@media (max-width: 480px) {
+  .logo-text {
+    font-size: 2.6rem;
+    white-space: nowrap;
+    gap: 10px;
+  }
+
+  .logo-emoji {
+    font-size: 2.2rem;
   }
 }

@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>🎰 Circo Online</title>
 
-  <!-- DOMAIN VERIFICATION -->
-  <meta name="facebook-domain-verification" content="o1hoq82czvz17489kpf7eb2sqc8ta1">
+  <!-- META DE VERIFICACIÓN DE DOMINIO DE META -->
+  <meta name="facebook-domain-verification" content="o1hoq82czvz17489kpf7eb2sqc8ta1" />
 
   <!-- FUENTES -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,20 +20,18 @@
 
   <!-- PIXEL META -->
   <script>
-    !(function(f,b,e,v,n,t,s){
-      if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-      n.queue=[];t=b.createElement(e);t.async=!0;
-      t.src=v;s=b.getElementsByTagName(e)[0];
-      s.parentNode.insertBefore(t,s)
-    })(window, document,'script',
-      'https://connect.facebook.net/en_US/fbevents.js');
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
 
     fbq('init', '1946841772846486');
     fbq('track', 'PageView');
   </script>
-
 </head>
 
 <body style="background-image: url('img/fondotrebol.png'); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;">
@@ -57,18 +55,48 @@
     </button>
   </div>
 
-  <!-- SLIDER, MÉTODOS DE PAGO, ETC… (SIN CAMBIOS) -->
+  <div class="barra-juegos-slider" style="background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px);">
+    <div class="scroll-content">
+      <img src="img/game.pragmaticPlayGatesOfOlympus.thumbnail.512x512_v4.png" alt="Slots">
+      <img src="img/game.pragmaticPlayGoldParty.thumbnail.512x512_v3.png" alt="Ruleta">
+      <img src="img/game.pragmaticPlayJokersJewels.thumbnail.512x512_v3.png" alt="Cartas">
+      <img src="img/game.pragmaticPlaySweetBonanza.thumbnail.512x512_v4.png" alt="Deportes">
+      <img src="img/game.pragmaticPlayCongoCash.thumbnail.512x512_v3.png" alt="Jackpot">
+      <img src="img/game.mg9MasksOfFire.thumbnail.512x512_v3.png" alt="Bonus">
+      <!-- segundo set -->
+      <img src="img/game.pragmaticPlayGatesOfOlympus.thumbnail.512x512_v4.png" alt="Slots">
+      <img src="img/game.pragmaticPlayGoldParty.thumbnail.512x512_v3.png" alt="Ruleta">
+      <img src="img/game.pragmaticPlayJokersJewels.thumbnail.512x512_v3.png" alt="Cartas">
+      <img src="img/game.pragmaticPlaySweetBonanza.thumbnail.512x512_v4.png" alt="Deportes">
+      <img src="img/game.pragmaticPlayCongoCash.thumbnail.512x512_v3.png" alt="Jackpot">
+      <img src="img/game.mg9MasksOfFire.thumbnail.512x512_v3.png" alt="Bonus">
+    </div>
+  </div>
+  
+  <div class="info-externa" style="background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2);">
+    <p id="minimoDeposito">Mínimo de carga: $1000</p>
+    <p>CIRCO EN VIVO - SLOTS - DEPORTIVAS</p>
+  </div>
 
-  <!-- SCRIPT OPTIMIZADO: ANTI-SPAM + GENERACIÓN fbp/fbc -->
+  <div class="metodos-pago" style="background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2);">
+    <h2 class="titulo-pago">MÉTODOS DE PAGO</h2>
+    <div class="iconos-pago">
+      <img src="img/8043680.png" alt="Mastercard">
+      <img src="img/Mercado Pago.png" alt="MercadoPago">
+      <img src="img/logo-large.png" alt="Rapipago">
+      <img src="img/logo-cuenta-dni.png" alt="Pago Fácil">
+    </div>
+  </div>
+
+  <!-- SCRIPT OPTIMIZADO CON FBP/FBC GARANTIZADOS -->
   <script>
     const WHATSAPP_NUMBER = "5492236735372";
     const SHEET_URL = "https://script.google.com/macros/s/AKfycbwyADs1Mu32qEnFhwV4ySNK6Uaa3WzaCkDU_o3xFnhgMvXxvZcE3Pps6EGRguwyFhqq/exec";
 
     let btn;
 
-    // -------------------------
-    //   UTILIDADES
-    // -------------------------
+    /* ---------------------- UTILIDADES ---------------------- */
+
     function getCookie(name) {
       const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
       return match ? match[2] : "";
@@ -78,37 +106,21 @@
       document.cookie = `${name}=${value}; path=/; max-age=63072000`;
     }
 
-    function generateFBP() {
-      return `fb.1.${Date.now()}.${Math.floor(Math.random()*1e10)}`;
-    }
-
-    function generateFBCFromFBCLID() {
-      const fbclid = new URLSearchParams(location.search).get("fbclid");
-      return fbclid ? `fb.1.${Date.now()}.${fbclid}` : "";
-    }
-
     function ensureFBP() {
       let fbp = getCookie("_fbp");
       if (!fbp) {
-        fbp = generateFBP();
+        fbp = `fb.1.${Date.now()}.${Math.floor(Math.random() * 1e10)}`;
         setCookie("_fbp", fbp);
       }
       return fbp;
     }
 
     function ensureFBC() {
-      let fbc = getCookie("_fbc");
-      if (fbc) return fbc;
-
-      // Si no hay cookie fbc pero sí fbclid → generar fbc válido
-      const generated = generateFBCFromFBCLID();
-      if (generated) {
-        setCookie("_fbc", generated);
-        return generated;
-      }
-
-      // Si NO hay fbclid → NO generar nada (esto evita datos falsos)
-      return "";
+      const fbclid = new URLSearchParams(window.location.search).get("fbclid");
+      if (!fbclid) return "";
+      const fbc = `fb.1.${Date.now()}.${fbclid}`;
+      setCookie("_fbc", fbc);
+      return fbc;
     }
 
     function generateShortID() {
@@ -139,9 +151,8 @@
       }
     }
 
-    // -------------------------
-    //   CLICK AL BOTÓN
-    // -------------------------
+    /* ---------------------- CLICK WHATSAPP ---------------------- */
+
     async function handleWhatsAppClick(event) {
       event?.preventDefault?.();
 
@@ -150,30 +161,26 @@
       btn.disabled = true;
       btn.querySelector("span").textContent = "CARGANDO...";
 
+      const fbp = ensureFBP();
+      const fbc = ensureFBC();
+
       const click_id = getOrCreateClickID();
       const event_id = "contact-" + click_id;
       const timestamp = new Date().toISOString();
 
-      const fbp = ensureFBP();     // si no existe → lo crea
-      const fbc = ensureFBC();     // solo si existe fbclid → lo crea
-
-      // Pixel Contact
       if (typeof fbq !== "undefined") {
         fbq("track", "Contact", {}, { eventID: event_id });
       }
 
-      // Enviar a Google Sheets
-      safeSend({ click_id, event_id, fbp, fbc, timestamp });
+      safeSend({ click_id, fbp, fbc, event_id, timestamp });
 
-      // Abrir WhatsApp
       const message = `Hola, quiero registrarme. Mi código es ${click_id}`;
       window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, "_blank");
 
-      // Re-habilitar
       setTimeout(() => {
         btn.disabled = false;
         btn.querySelector("span").textContent = "CREÁ TU USUARIO";
-      }, 3500);
+      }, 4000);
     }
 
     document.addEventListener("DOMContentLoaded", () => {

@@ -1,182 +1,288 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🎰 Circo Online</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin — Registrar Compra (Meta CAPI) v2.3</title>
+  <style>
+    body {
+      font-family: 'Poppins', Arial, sans-serif;
+      background: #000;
+      color: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 40px 10px;
+    }
 
-  <!-- META DE VERIFICACIÓN DE DOMINIO DE META -->
-  <meta name="facebook-domain-verification" content="o1hoq82czvz17489kpf7eb2sqc8ta1" />
+    .card {
+      background: #0d0d0d;
+      padding: 30px;
+      border-radius: 14px;
+      width: 420px;
+      box-shadow: 0 0 20px rgba(0, 255, 136, 0.15);
+    }
 
-  <!-- FUENTES -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;600;700;900&family=Russo+One&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;600;700;900&family=Russo+One&display=swap" rel="stylesheet"></noscript>
+    h2 {
+      color: #00ff88;
+      text-align: center;
+      margin-bottom: 10px;
+    }
 
-  <!-- CSS -->
-  <link rel="stylesheet" href="estilo.css">
-  <link rel="icon" type="image/png" href="img/favicon.png">
+    .hint {
+      font-size: 0.85rem;
+      color: #aaa;
+      margin-bottom: 10px;
+      text-align: center;
+    }
 
-  <!-- PIXEL META -->
-  <script>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
-    
-    fbq('init', '1946841772846486');
-    fbq('track', 'PageView');
-  </script>
+    label {
+      display: block;
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: #bdf9d1;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      border: 1px solid #222;
+      background: #111;
+      color: #fff;
+      box-sizing: border-box;
+      transition: border-color 0.2s;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #00ff88;
+    }
+
+    .section-title {
+      font-size: 0.9rem;
+      color: #00ff88;
+      margin-top: 25px;
+      border-bottom: 1px solid #333;
+      padding-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    button {
+      background-color: #00ff88;
+      border: none;
+      font-weight: 700;
+      cursor: pointer;
+      color: #000;
+      padding: 12px;
+      border-radius: 8px;
+      width: 100%;
+      margin-top: 15px;
+      font-size: 1rem;
+      transition: all 0.25s ease;
+    }
+
+    button:hover {
+      background-color: #00cc6f;
+      transform: translateY(-1px);
+      box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    #response {
+      margin-top: 15px;
+      white-space: pre-wrap;
+      font-size: 0.9rem;
+      word-break: break-all;
+      color: #ccc;
+    }
+
+    .mode-toggle {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #111;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      padding: 8px 10px;
+      gap: 8px;
+      border: 1px solid #222;
+    }
+
+    .mode-toggle label {
+      margin: 0;
+      font-size: 0.85rem;
+      color: #ccc;
+      cursor: pointer;
+    }
+
+    .mode-toggle input[type="radio"] {
+      accent-color: #00ff88;
+      cursor: pointer;
+    }
+
+    .optional-section {
+      transition: all 0.3s ease;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
 </head>
+<body>
+  <div class="card" role="main">
+    <h2>🧾 Registrar Compra — CAPI</h2>
+    <p class="hint">Ingresá la <strong>clave administrativa</strong> para continuar</p>
 
-<body style="background-image: url('img/fondotrebol.png'); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;">
-  
-  <h1 class="logo-text" id="logoContainer" style="visibility: visible;">
-    <span class="logo-emoji">🎰</span>
-    <span class="logo-text-fill" id="casinoName" style="color: #00ff88; text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);">CIRCO ONLINE</span>
-  </h1>
+    <label for="adminToken">Clave administrativa</label>
+    <input id="adminToken" type="password" autocomplete="off" placeholder="token" />
 
-  <div class="card" style="background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px);">
-    <div class="main-text">
-      <p style="font-family: 'Russo One', sans-serif; font-size: 1.2rem; color: #00ff88; text-transform: uppercase; margin-bottom: 15px;"><span style="font-size: 1.3rem;">🔥</span> JUGÁ Y GANÁ EN GRANDE <span style="font-size: 1.3rem;">🔥</span></p>
-      <p style="font-family: 'Poppins', sans-serif; font-size: 1.6rem; color: #FFD700; font-weight: 700; text-transform: uppercase;">RETIROS ILIMITADOS</p>
-    </div>
+    <div class="mode-toggle">
+      <input type="radio" id="modoOffline" name="modo" value="offline" checked />
+      <label for="modoOffline">🖤 Modo Offline</label>
 
-    <button class="popup-button" id="whatsappButton">
-      <span>CREÁ TU USUARIO</span>
-      <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="white" viewBox="0 0 24 24">
-        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.149-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414-.074-.123-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-      </svg>
-    </button>
-  </div>
+      <input type="radio" id="modoAnuncio" name="modo" value="anuncio" />
+      <label for="modoAnuncio">💚 Modo Anuncio</label>
+    </div>
 
-  <div class="barra-juegos-slider" style="background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px);">
-    <div class="scroll-content">
-      <img src="img/game.pragmaticPlayGatesOfOlympus.thumbnail.512x512_v4.png" alt="Slots">
-      <img src="img/game.pragmaticPlayGoldParty.thumbnail.512x512_v3.png" alt="Ruleta">
-      <img src="img/game.pragmaticPlayJokersJewels.thumbnail.512x512_v3.png" alt="Cartas">
-      <img src="img/game.pragmaticPlaySweetBonanza.thumbnail.512x512_v4.png" alt="Deportes">
-      <img src="img/game.pragmaticPlayCongoCash.thumbnail.512x512_v3.png" alt="Jackpot">
-      <img src="img/game.mg9MasksOfFire.thumbnail.512x512_v3.png" alt="Bonus">
-      <!-- segundo set -->
-      <img src="img/game.pragmaticPlayGatesOfOlympus.thumbnail.512x512_v4.png" alt="Slots">
-      <img src="img/game.pragmaticPlayGoldParty.thumbnail.512x512_v3.png" alt="Ruleta">
-      <img src="img/game.pragmaticPlayJokersJewels.thumbnail.512x512_v3.png" alt="Cartas">
-      <img src="img/game.pragmaticPlaySweetBonanza.thumbnail.512x512_v4.png" alt="Deportes">
-      <img src="img/game.pragmaticPlayCongoCash.thumbnail.512x512_v3.png" alt="Jackpot">
-      <img src="img/game.mg9MasksOfFire.thumbnail.512x512_v3.png" alt="Bonus">
-    </div>
-  </div>
-  
-  <div class="info-externa" style="background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2);">
-    <p id="minimoDeposito">Mínimo de carga: $1000</p>
-    <p>CIRCO EN VIVO - SLOTS - DEPORTIVAS</p>
-  </div>
+    <h3 class="section-title">Datos del Usuario</h3>
 
-  <div class="metodos-pago" style="background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2);">
-    <h2 class="titulo-pago">MÉTODOS DE PAGO</h2>
-    <div class="iconos-pago">
-      <img src="img/8043680.png" alt="Mastercard">
-      <img src="img/Mercado Pago.png" alt="MercadoPago">
-      <img src="img/logo-large.png" alt="Rapipago">
-      <img src="img/logo-cuenta-dni.png" alt="Pago Fácil">
-    </div>
-  </div>
+    <label for="nombre">Nombre</label>
+    <input id="nombre" type="text" placeholder="nombre" />
 
-  <!-- SCRIPT MEJORADO (CON LÓGICA ANTI-SPAM) -->
-  <script>
-    const WHATSAPP_NUMBER = "5492236735372";
-    const SHEET_URL = "https://script.google.com/macros/s/AKfycbwyADs1Mu32qEnFhwV4ySNK6Uaa3WzaCkDU_o3xFnhgMvXxvZcE3Pps6EGRguwyFhqq/exec";
-    const CLICK_ID_LIFETIME_MS = 5 * 60 * 1000; // 5 minutos
+    <label for="apellido">Apellido</label>
+    <input id="apellido" type="text" placeholder="apellido" />
 
-    // --- 1. Definir la variable del botón en un alcance superior ---
-    let btn; 
+    <label for="phone">Teléfono (ej: +5491122334455)</label>
+    <input id="phone" type="text" placeholder="+5491122334455" />
 
-    function getCookie(name) {
-      const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
-      return match ? match[2] : "";
-    }
+    <label for="amount">Monto en ARS (ej: 26000)</label>
+    <input id="amount" type="number" placeholder="26000" />
 
-    function generateShortID() {
-      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-      let id = "";
-      for (let i = 0; i < 5; i++) id += chars.charAt(Math.floor(Math.random() * chars.length));
-      return id;
-    }
+    <div class="optional-section hidden" id="eventTimeField">
+      <label for="event_time">Fecha y hora (opcional)</label>
+      <input id="event_time" type="datetime-local" />
+    </div>
 
-    function getOrCreateClickID() {
-      const stored = sessionStorage.getItem("click_info");
-      const now = Date.now();
-      if (stored) {
-        try {
-          const parsed = JSON.parse(stored);
-          if (now - parsed.timestamp < CLICK_ID_LIFETIME_MS) {
-            return parsed.click_id;
-          }
-        } catch {}
-      }
-      const newClick = { click_id: generateShortID(), timestamp: now };
-      sessionStorage.setItem("click_info", JSON.stringify(newClick));
-      return newClick.click_id;
-    }
+    <div class="optional-section hidden" id="anuncioFields">
+      <h3 class="section-title">Datos de Vinculación (EMQ)</h3>
+      <p class="hint">Solo si el cliente vino desde un anuncio</p>
 
-    async function handleWhatsAppClick(event) {
-      event?.preventDefault?.();
+      <label for="click_id">Click ID (ej: A9B3D)</label>
+      <input id="click_id" type="text" placeholder="A9B3D" />
 
-      // --- 2. LÓGICA ANTI-SPAM (MODIFICADA) ---
-      // Si el botón ya está deshabilitado, no hacer nada.
-      if (btn && btn.disabled) {
-        console.log("Botón ya presionado, evitando doble clic.");
-        return; 
+      <label for="event_id">Event ID (ej: contact-A9B3D)</label>
+      <input id="event_id" type="text" placeholder="contact-A9B3D" />
+
+      <label for="fbp">FBP (Cookie de Navegador)</label>
+      <input id="fbp" type="text" placeholder="fb.1.1731269872.1234567890" />
+
+      <label for="fbc">FBC (Cookie de Clic, opcional)</label>
+      <input id="fbc" type="text" placeholder="fb.1.1731269872.TEST123" />
+    </div>
+
+    <button id="sendBtn">Enviar compra a Meta</button>
+    <div id="response" aria-live="polite"></div>
+  </div>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    const sendBtn = $('sendBtn');
+    const resp = $('response');
+    const anuncioFields = $('anuncioFields');
+    const eventTimeField = $('eventTimeField');
+    const modoOffline = $('modoOffline');
+    const modoAnuncio = $('modoAnuncio');
+
+    // Mostrar/ocultar campos según el modo
+    modoOffline.addEventListener('change', () => {
+      anuncioFields.classList.add('hidden');
+      eventTimeField.classList.add('hidden');
+    });
+    modoAnuncio.addEventListener('change', () => {
+      anuncioFields.classList.remove('hidden');
+      eventTimeField.classList.remove('hidden');
+    });
+
+    function validatePhone(p) {
+      if (!p) return false;
+      const cleaned = p.trim();
+      const digits = cleaned.replace(/\D/g, '');
+      return digits.length >= 7;
+    }
+
+    async function sendPurchase() {
+      resp.textContent = '';
+
+      const adminToken = $('adminToken').value.trim();
+      const nombre = $('nombre').value.trim();
+      const apellido = $('apellido').value.trim();
+      const phone = $('phone').value.trim();
+      const amount = $('amount').value.trim();
+      const event_time = modoAnuncio.checked ? $('event_time').value : null;
+      const click_id = $('click_id').value.trim();
+      const event_id = $('event_id').value.trim();
+      const fbp = $('fbp').value.trim();
+      const fbc = $('fbc').value.trim();
+
+      if (!adminToken) {
+        resp.textContent = '🔒 Necesitás la clave administrativa.';
+        return;
+      }
+      if (!nombre || !apellido || !phone || !amount) {
+        resp.textContent = '❌ Completa los campos obligatorios (Nombre, Apellido, Teléfono, Monto).';
+        return;
+      }
+      if (!validatePhone(phone)) {
+        resp.textContent = '❌ Teléfono inválido.';
+        return;
       }
 
-      // Deshabilitar el botón y cambiar el texto
-      if (btn) {
-        btn.disabled = true;
-        const btnTextSpan = btn.querySelector('span'); // Selecciona el <span> dentro del botón
-        if (btnTextSpan) btnTextSpan.textContent = "CARGANDO..."; // Cambia el texto
+      sendBtn.disabled = true;
+      sendBtn.textContent = 'Enviando...';
+
+      try {
+        const payload = { nombre, apellido, phone, amount, event_time, click_id, event_id, fbp, fbc };
+        const res = await fetch('/api/meta-purchase', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + adminToken
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (res.ok && data.success) {
+          resp.textContent = '✅ Compra enviada correctamente.\n\n' + JSON.stringify(data.metaResponse, null, 2);
+        } else {
+          resp.textContent = '❌ Error: ' + (data.error || data.message || JSON.stringify(data));
+        }
+      } catch (e) {
+        resp.textContent = '❌ Error de red o servidor: ' + e.message;
+      } finally {
+        sendBtn.disabled = false;
+        sendBtn.textContent = 'Enviar compra a Meta';
       }
-      // --- FIN DE LÓGICA ANTI-SPAM ---
+    }
 
-      const fbp = getCookie("_fbp");
-      const fbc = getCookie("_fbc") || 
-        (window.location.search.match(/fbclid=([^&]+)/) ? "fb.1." + Date.now() + "." + RegExp.$1 : "");
+    sendBtn.addEventListener('click', sendPurchase);
 
-      const click_id = getOrCreateClickID();
-      const event_id = "contact-" + click_id;
-      const timestamp = new Date().toISOString();
-
-      if (typeof fbq !== "undefined") {
-        try { fbq("track", "Contact", {}, { eventID: event_id }); } catch(e) { console.error("Error al rastrear FBQ:", e); }
-T   }
-
-      try {
-        await fetch(SHEET_URL, {
-          method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "text/plain;charset=UTF-8" },
-          body: JSON.stringify({ click_id, fbp, fbc, event_id, timestamp })
-        });
-      } catch (err) {
-        console.warn("Error en fetch:", err);
-IA    }
-
-      const message = `Hola, quiero registrarme. Mi código es ${click_id}`;
-      
-      // Abrir WhatsApp
-      window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, "_blank");
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      // --- 3. Asignar el elemento del botón a la variable 'btn' ---
-      btn = document.getElementById("whatsappButton"); 
-      if (btn) btn.addEventListener("click", handleWhatsAppClick);
-    });
-  </script>
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.target.matches('textarea')) {
+        e.preventDefault();
+        if (!sendBtn.disabled) sendPurchase();
+      }
+    });
+  </script>
 </body>
 </html>

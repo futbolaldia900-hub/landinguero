@@ -32,7 +32,7 @@ export default async function handler(req, res) {
       return res.status(401).json({ success: false, error: "No autorizado" });
     }
 
-    // 2. Recibir Payload (USAMOS 'let' PARA PODER LIMPIARLOS)
+    // 2. Recibir Payload
     const payload = req.body || {};
     let { 
       nombre, 
@@ -41,18 +41,16 @@ export default async function handler(req, res) {
       amount, 
       event_time,
       event_id, 
-      fbp,      
-      fbc,      
+      fbp,       
+      fbc,       
       click_id 
     } = payload;
 
-    // --- 🛡️ NUEVO: LIMPIEZA DE ESPACIOS (CRÍTICO) ---
-    // Esto evita que un espacio invisible rompa la atribución de la venta
+    // --- 🛡️ LIMPIEZA DE ESPACIOS ---
     if (fbc) fbc = String(fbc).trim();
     if (fbp) fbp = String(fbp).trim();
     if (event_id) event_id = String(event_id).trim();
     if (click_id) click_id = String(click_id).trim();
-    // -------------------------------------------------
 
     // 3. Validación Mínima
     if (!nombre || !apellido || !phone || !amount) {
@@ -73,7 +71,7 @@ export default async function handler(req, res) {
     const hashedName = hash(normalizedName);
     const hashedSurname = hash(normalizedSurname);
 
-    // 5. Lógica de Modos
+    // 5. Lógica de Modos (Para definir user_data)
     // Aceptamos Modo Anuncio si hay event_id Y (fbp O fbc)
     const isModoAnuncio = event_id && (fbp || fbc);
     
@@ -82,7 +80,7 @@ export default async function handler(req, res) {
     let user_data_payload;
 
     if (isModoAnuncio) {
-      // --- MODO ANUNCIO ---
+      // --- MODO ANUNCIO (Tenemos datos de rastreo) ---
       final_event_id = event_id; 
       
       if (event_time) {
@@ -96,12 +94,12 @@ export default async function handler(req, res) {
         ph: [hashedPhone],
         fn: [hashedName],
         ln: [hashedSurname],
-        fbp: fbp || undefined, // Envía undefined si está vacío
+        fbp: fbp || undefined,
         fbc: fbc || undefined 
       };
 
     } else {
-      // --- MODO OFFLINE ---
+      // --- MODO OFFLINE (Venta orgánica o sin datos de rastreo) ---
       final_event_id = `purchase_offline_${Date.now()}_${Math.floor(Math.random() * 10000)}`;
       final_event_time = Math.floor(Date.now() / 1000);
 
@@ -121,6 +119,7 @@ export default async function handler(req, res) {
     }
 
     // 7. Construir Body para Meta CAPI
+    // CORRECCIÓN CRÍTICA APLICADA: action_source forzado a "system_generated"
     const eventBody = {
       data: [
         {
@@ -132,9 +131,9 @@ export default async function handler(req, res) {
             currency: "ARS",
             value: parseFloat(amount)
           },
-          // AQUI ESTA EL CAMBIO:
-          action_source: isModoAnuncio ? "website" : "system_generated",
-          event_source_url: isModoAnuncio ? "https://www.imperioesmeralda.online/" : undefined
+          // ESTO SOLUCIONA EL CONFLICTO DE IP:
+          action_source: "system_generated",
+          event_source_url: undefined // No es necesario en system_generated
         }
       ]
     };
@@ -151,7 +150,7 @@ export default async function handler(req, res) {
 
     // 9. Logging
     console.log(
-      `[CAPI] Phone: ${normalizedPhone} | Mode: ${isModoAnuncio ? 'ANUNCIO' : 'OFFLINE'}`,
+      `[CAPI] Phone: ${normalizedPhone} | Mode: ${isModoAnuncio ? 'ANUNCIO (System Gen)' : 'OFFLINE'}`,
       `| FBP: ${fbp ? 'OK' : 'NO'} | FBC: ${fbc ? 'OK' : 'NO'}`,
       `| Meta Resp: ${metaJson.id ? 'OK' : JSON.stringify(metaJson)}`
     );

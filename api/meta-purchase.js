@@ -132,7 +132,9 @@ export default async function handler(req, res) {
             currency: "ARS",
             value: parseFloat(amount)
           },
-          action_source: isModoAnuncio ? "website" : "system_generated"
+          // AQUI ESTA EL CAMBIO:
+          action_source: isModoAnuncio ? "website" : "system_generated",
+          event_source_url: isModoAnuncio ? "https://www.imperioesmeralda.online/" : undefined
         }
       ]
     };

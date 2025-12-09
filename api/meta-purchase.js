@@ -32,7 +32,7 @@ export default async function handler(req, res) {
       return res.status(401).json({ success: false, error: "No autorizado" });
     }
 
-    // 2. Recibir Payload
+    // 2. Recibir Payload (AHORA ACEPTAMOS test_event_code DESDE EL SHEET)
     const payload = req.body || {};
     let { 
       nombre, 
@@ -41,9 +41,10 @@ export default async function handler(req, res) {
       amount, 
       event_time, 
       event_id, 
-      fbp,        
-      fbc,        
-      click_id 
+      fbp,         
+      fbc,         
+      click_id,
+      test_event_code // <--- ¡AQUI LO RECIBIMOS DEL APPSSCRIPT!
     } = payload;
 
     // --- 🛡️ LIMPIEZA DE ESPACIOS ---
@@ -51,6 +52,7 @@ export default async function handler(req, res) {
     if (fbp) fbp = String(fbp).trim();
     if (event_id) event_id = String(event_id).trim();
     if (click_id) click_id = String(click_id).trim();
+    if (test_event_code) test_event_code = String(test_event_code).trim();
 
     // 3. Validación Mínima
     if (!nombre || !apellido || !phone || !amount) {
@@ -71,7 +73,7 @@ export default async function handler(req, res) {
     const hashedName = hash(normalizedName);
     const hashedSurname = hash(normalizedSurname);
 
-    // 5. Lógica de Fecha (BLINDADA)
+    // 5. Lógica de Fecha
     let final_event_time = Math.floor(Date.now() / 1000);
 
     if (event_time) {
@@ -119,7 +121,7 @@ export default async function handler(req, res) {
       return res.status(500).json({ success: false, error: "Faltan vars de entorno" });
     }
 
-    // 8. Construir Body para Meta CAPI (CON MODO TEST CORREGIDO)
+    // 8. Construir Body para Meta CAPI
     const eventBody = {
       data: [
         {
@@ -131,13 +133,17 @@ export default async function handler(req, res) {
             currency: "ARS",
             value: parseFloat(amount)
           },
-          action_source: "system_generated",
-          event_source_url: undefined
+          // CAMBIO IMPORTANTE: "website" funciona mejor con fbp/fbc
+          action_source: "website", 
+          event_source_url: "https://imperioesmeralda.online" // Opcional, pero recomendable
         }
-      ],
-      // 👇 AQUI VA EL CODIGO (AFUERA DE DATA) 👇
-      test_event_code: "TEST55312"
+      ]
     };
+
+    // 🔴 AQUI ESTÁ LA MAGIA: SOLO AGREGAMOS TEST SI VIENE DEL SHEET
+    if (test_event_code) {
+        eventBody.test_event_code = test_event_code;
+    }
 
     // 9. Enviar a Meta
     const graphUrl = `https://graph.facebook.com/v19.0/${PIXEL_ID}/events?access_token=${ACCESS_TOKEN}`;
@@ -151,7 +157,7 @@ export default async function handler(req, res) {
 
     // 10. Logging
     console.log(
-      `[CAPI] Phone: ${normalizedPhone} | Time: ${final_event_time} | TEST MODE: ON`,
+      `[CAPI] Phone: ${normalizedPhone} | Time: ${final_event_time} | TEST MODE: ${test_event_code ? 'ON ('+test_event_code+')' : 'OFF'}`,
       `| Meta Resp: ${metaJson.id ? 'OK' : JSON.stringify(metaJson)}`
     );
     

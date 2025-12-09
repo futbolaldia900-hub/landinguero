@@ -119,7 +119,7 @@ export default async function handler(req, res) {
       return res.status(500).json({ success: false, error: "Faltan vars de entorno" });
     }
 
-    // 8. Construir Body para Meta CAPI (CON MODO TEST ACTIVADO)
+    // 8. Construir Body para Meta CAPI (CON MODO TEST CORREGIDO)
     const eventBody = {
       data: [
         {
@@ -132,12 +132,11 @@ export default async function handler(req, res) {
             value: parseFloat(amount)
           },
           action_source: "system_generated",
-          event_source_url: undefined,
-
-          // 👇 AQUÍ ESTÁ EL CAMBIO PARA QUE VEAS EL TEST EN VIVO 👇
-          test_event_code: "TEST55312"
+          event_source_url: undefined
         }
-      ]
+      ],
+      // 👇 AQUI VA EL CODIGO (AFUERA DE DATA) 👇
+      test_event_code: "TEST55312"
     };
 
     // 9. Enviar a Meta

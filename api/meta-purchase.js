@@ -39,7 +39,7 @@ export default async function handler(req, res) {
       apellido, 
       phone, 
       amount, 
-      event_time, // Esto llega como ISO String desde Google
+      event_time, 
       event_id, 
       fbp,        
       fbc,        
@@ -72,12 +72,10 @@ export default async function handler(req, res) {
     const hashedSurname = hash(normalizedSurname);
 
     // 5. Lógica de Fecha (BLINDADA)
-    // Inicializamos con AHORA por defecto para evitar errores
     let final_event_time = Math.floor(Date.now() / 1000);
 
     if (event_time) {
       const d = new Date(event_time);
-      // Verificamos si la fecha es válida matemáticamente
       if (!isNaN(d.getTime())) {
         final_event_time = Math.floor(d.getTime() / 1000);
       } else {
@@ -85,7 +83,7 @@ export default async function handler(req, res) {
       }
     }
 
-    // 6. Lógica de Modos (Para definir user_data y event_id)
+    // 6. Lógica de Modos
     const isModoAnuncio = event_id && (fbp || fbc);
     let final_event_id;
     let user_data_payload;
@@ -118,15 +116,15 @@ export default async function handler(req, res) {
     const ACCESS_TOKEN = process.env.META_ACCESS_TOKEN;
     
     if (!PIXEL_ID || !ACCESS_TOKEN) {
-      return res.status(500).json({ success: false, error: "Faltan vars de entorno (META_PIXEL_ID o TOKEN)" });
+      return res.status(500).json({ success: false, error: "Faltan vars de entorno" });
     }
 
-    // 8. Construir Body para Meta CAPI
+    // 8. Construir Body para Meta CAPI (CON MODO TEST ACTIVADO)
     const eventBody = {
       data: [
         {
           event_name: "Purchase",
-          event_time: final_event_time, // Ahora garantizamos que es un NÚMERO
+          event_time: final_event_time,
           event_id: final_event_id,
           user_data: user_data_payload,
           custom_data: {
@@ -134,7 +132,10 @@ export default async function handler(req, res) {
             value: parseFloat(amount)
           },
           action_source: "system_generated",
-          event_source_url: undefined
+          event_source_url: undefined,
+
+          // 👇 AQUÍ ESTÁ EL CAMBIO PARA QUE VEAS EL TEST EN VIVO 👇
+          test_event_code: "TEST55312"
         }
       ]
     };
@@ -149,13 +150,12 @@ export default async function handler(req, res) {
 
     const metaJson = await metaResp.json();
 
-    // 10. Logging (Para depuración)
+    // 10. Logging
     console.log(
-      `[CAPI] Phone: ${normalizedPhone} | Time: ${final_event_time}`,
+      `[CAPI] Phone: ${normalizedPhone} | Time: ${final_event_time} | TEST MODE: ON`,
       `| Meta Resp: ${metaJson.id ? 'OK' : JSON.stringify(metaJson)}`
     );
     
-    // Si Meta devuelve error, lo informamos al Excel
     if (metaJson.error) {
        return res.status(400).json({ success: false, message: "Meta rechazó el evento", metaError: metaJson.error });
     }

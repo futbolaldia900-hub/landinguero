@@ -39,10 +39,10 @@ export default async function handler(req, res) {
       apellido, 
       phone, 
       amount, 
-      event_time,
+      event_time, // Esto llega como ISO String desde Google
       event_id, 
-      fbp,       
-      fbc,       
+      fbp,        
+      fbc,        
       click_id 
     } = payload;
 
@@ -71,25 +71,29 @@ export default async function handler(req, res) {
     const hashedName = hash(normalizedName);
     const hashedSurname = hash(normalizedSurname);
 
-    // 5. Lógica de Modos (Para definir user_data)
-    // Aceptamos Modo Anuncio si hay event_id Y (fbp O fbc)
+    // 5. Lógica de Fecha (BLINDADA)
+    // Inicializamos con AHORA por defecto para evitar errores
+    let final_event_time = Math.floor(Date.now() / 1000);
+
+    if (event_time) {
+      const d = new Date(event_time);
+      // Verificamos si la fecha es válida matemáticamente
+      if (!isNaN(d.getTime())) {
+        final_event_time = Math.floor(d.getTime() / 1000);
+      } else {
+        console.warn(`[WARN] Fecha inválida recibida: ${event_time}. Usando AHORA.`);
+      }
+    }
+
+    // 6. Lógica de Modos (Para definir user_data y event_id)
     const isModoAnuncio = event_id && (fbp || fbc);
-    
     let final_event_id;
-    let final_event_time;
     let user_data_payload;
 
     if (isModoAnuncio) {
-      // --- MODO ANUNCIO (Tenemos datos de rastreo) ---
+      // --- MODO ANUNCIO ---
       final_event_id = event_id; 
       
-      if (event_time) {
-        const d = new Date(event_time);
-        final_event_time = !isNaN(d.getTime()) ? Math.floor(d.getTime() / 1000) : Math.floor(Date.now() / 1000);
-      } else {
-        final_event_time = Math.floor(Date.now() / 1000);
-      }
-
       user_data_payload = {
         ph: [hashedPhone],
         fn: [hashedName],
@@ -99,10 +103,9 @@ export default async function handler(req, res) {
       };
 
     } else {
-      // --- MODO OFFLINE (Venta orgánica o sin datos de rastreo) ---
+      // --- MODO OFFLINE ---
       final_event_id = `purchase_offline_${Date.now()}_${Math.floor(Math.random() * 10000)}`;
-      final_event_time = Math.floor(Date.now() / 1000);
-
+      
       user_data_payload = {
         ph: [hashedPhone],
         fn: [hashedName],
@@ -110,7 +113,7 @@ export default async function handler(req, res) {
       };
     }
 
-    // 6. Variables de Entorno
+    // 7. Variables de Entorno
     const PIXEL_ID = process.env.META_PIXEL_ID;
     const ACCESS_TOKEN = process.env.META_ACCESS_TOKEN;
     
@@ -118,27 +121,25 @@ export default async function handler(req, res) {
       return res.status(500).json({ success: false, error: "Faltan vars de entorno (META_PIXEL_ID o TOKEN)" });
     }
 
-    // 7. Construir Body para Meta CAPI
-    // CORRECCIÓN CRÍTICA APLICADA: action_source forzado a "system_generated"
+    // 8. Construir Body para Meta CAPI
     const eventBody = {
       data: [
         {
           event_name: "Purchase",
-          event_time: final_event_time,
+          event_time: final_event_time, // Ahora garantizamos que es un NÚMERO
           event_id: final_event_id,
           user_data: user_data_payload,
           custom_data: {
             currency: "ARS",
             value: parseFloat(amount)
           },
-          // ESTO SOLUCIONA EL CONFLICTO DE IP:
           action_source: "system_generated",
-          event_source_url: undefined // No es necesario en system_generated
+          event_source_url: undefined
         }
       ]
     };
 
-    // 8. Enviar a Meta
+    // 9. Enviar a Meta
     const graphUrl = `https://graph.facebook.com/v19.0/${PIXEL_ID}/events?access_token=${ACCESS_TOKEN}`;
     const metaResp = await fetch(graphUrl, {
       method: "POST",
@@ -148,13 +149,17 @@ export default async function handler(req, res) {
 
     const metaJson = await metaResp.json();
 
-    // 9. Logging
+    // 10. Logging (Para depuración)
     console.log(
-      `[CAPI] Phone: ${normalizedPhone} | Mode: ${isModoAnuncio ? 'ANUNCIO (System Gen)' : 'OFFLINE'}`,
-      `| FBP: ${fbp ? 'OK' : 'NO'} | FBC: ${fbc ? 'OK' : 'NO'}`,
+      `[CAPI] Phone: ${normalizedPhone} | Time: ${final_event_time}`,
       `| Meta Resp: ${metaJson.id ? 'OK' : JSON.stringify(metaJson)}`
     );
     
+    // Si Meta devuelve error, lo informamos al Excel
+    if (metaJson.error) {
+       return res.status(400).json({ success: false, message: "Meta rechazó el evento", metaError: metaJson.error });
+    }
+
     return res.status(200).json({ success: true, metaResponse: metaJson, event_id: final_event_id });
 
   } catch (error) {

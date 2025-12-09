@@ -32,7 +32,8 @@ export default async function handler(req, res) {
       return res.status(401).json({ success: false, error: "No autorizado" });
     }
 
-    // 2. Recibir Payload (AHORA ACEPTAMOS test_event_code DESDE EL SHEET)
+    // 2. Recibir Payload
+    // Nota: Aceptamos test_event_code si viene del Sheet, pero si no viene, es PRODUCCIÓN.
     const payload = req.body || {};
     let { 
       nombre, 
@@ -44,7 +45,7 @@ export default async function handler(req, res) {
       fbp,         
       fbc,         
       click_id,
-      test_event_code // <--- ¡AQUI LO RECIBIMOS DEL APPSSCRIPT!
+      test_event_code 
     } = payload;
 
     // --- 🛡️ LIMPIEZA DE ESPACIOS ---
@@ -85,7 +86,7 @@ export default async function handler(req, res) {
       }
     }
 
-    // 6. Lógica de Modos
+    // 6. Lógica de Modos (Anuncio vs Offline)
     const isModoAnuncio = event_id && (fbp || fbc);
     let final_event_id;
     let user_data_payload;
@@ -103,7 +104,7 @@ export default async function handler(req, res) {
       };
 
     } else {
-      // --- MODO OFFLINE ---
+      // --- MODO OFFLINE (Respaldo) ---
       final_event_id = `purchase_offline_${Date.now()}_${Math.floor(Math.random() * 10000)}`;
       
       user_data_payload = {
@@ -121,7 +122,7 @@ export default async function handler(req, res) {
       return res.status(500).json({ success: false, error: "Faltan vars de entorno" });
     }
 
-    // 8. Construir Body para Meta CAPI
+    // 8. Construir Body para Meta CAPI (PRODUCCIÓN - SYSTEM GENERATED)
     const eventBody = {
       data: [
         {
@@ -133,14 +134,15 @@ export default async function handler(req, res) {
             currency: "ARS",
             value: parseFloat(amount)
           },
-          // CAMBIO IMPORTANTE: "website" funciona mejor con fbp/fbc
-          action_source: "website", 
-          event_source_url: "https://imperioesmeralda.online" // Opcional, pero recomendable
+          // VOLVEMOS A SYSTEM GENERATED COMO PEDISTE
+          action_source: "system_generated", 
+          event_source_url: undefined 
         }
       ]
     };
 
-    // 🔴 AQUI ESTÁ LA MAGIA: SOLO AGREGAMOS TEST SI VIENE DEL SHEET
+    // Solo agregamos modo test si AppsScript lo solicita explícitamente.
+    // Como tu AppsScript ya no lo envía, esto se ignora (PRODUCCIÓN).
     if (test_event_code) {
         eventBody.test_event_code = test_event_code;
     }
@@ -157,8 +159,8 @@ export default async function handler(req, res) {
 
     // 10. Logging
     console.log(
-      `[CAPI] Phone: ${normalizedPhone} | Time: ${final_event_time} | TEST MODE: ${test_event_code ? 'ON ('+test_event_code+')' : 'OFF'}`,
-      `| Meta Resp: ${metaJson.id ? 'OK' : JSON.stringify(metaJson)}`
+      `[CAPI PROD] Phone: ${normalizedPhone} | Amount: ${amount} | ID: ${final_event_id}`,
+      `| Resp: ${metaJson.id ? 'OK' : 'ERROR'}`
     );
     
     if (metaJson.error) {

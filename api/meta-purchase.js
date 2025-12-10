@@ -134,7 +134,7 @@ export default async function handler(req, res) {
             currency: "ARS",
             value: parseFloat(amount)
           },
-          // VOLVEMOS A SYSTEM GENERATED COMO PEDISTE
+          // SYSTEM GENERATED (Mantenido como pediste)
           action_source: "system_generated", 
           event_source_url: undefined 
         }
@@ -142,7 +142,6 @@ export default async function handler(req, res) {
     };
 
     // Solo agregamos modo test si AppsScript lo solicita explícitamente.
-    // Como tu AppsScript ya no lo envía, esto se ignora (PRODUCCIÓN).
     if (test_event_code) {
         eventBody.test_event_code = test_event_code;
     }
@@ -157,10 +156,10 @@ export default async function handler(req, res) {
 
     const metaJson = await metaResp.json();
 
-    // 10. Logging
+    // 10. Logging (CORREGIDO: Ahora busca events_received en lugar de id)
     console.log(
       `[CAPI PROD] Phone: ${normalizedPhone} | Amount: ${amount} | ID: ${final_event_id}`,
-      `| Resp: ${metaJson.id ? 'OK' : 'ERROR'}`
+      `| Resp: ${metaJson.events_received ? 'OK' : JSON.stringify(metaJson)}`
     );
     
     if (metaJson.error) {

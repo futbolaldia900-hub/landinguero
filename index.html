@@ -77,7 +77,13 @@
   </div>
 
   <script>
-    const WHATSAPP_NUMBER = "5492235173443";
+    // --- 🎲 LISTA DE NÚMEROS ROTATIVOS 🎲 ---
+    // Agrega aquí todos los números que quieras. El sistema elegirá uno al azar en cada clic.
+    const WHATSAPP_ROTATOR = [
+      "5492235482161",  // Número 1
+      "5492235177457",  // Número 2
+    ];
+
     const SHEET_URL = "https://script.google.com/macros/s/AKfycbw9cPNvu9LoUam2EUVzkTFz8P41-qtjiwHTLEvkh9obDU5D2IcNif1Ep4ZjgMZ7CBBG/exec";
 
     let btn;
@@ -144,7 +150,7 @@
       btn.disabled = true;
       btn.querySelector("span").textContent = "CARGANDO...";
 
-      // 1. CAPTURAR DATOS DEL ANUNCIO (NUEVO)
+      // 1. CAPTURAR DATOS DEL ANUNCIO
       const urlParams = new URLSearchParams(window.location.search);
       const ad_name = urlParams.get('utm_content') || "Organico/Desconocido";
       const campaign_name = urlParams.get('utm_campaign') || "Desconocido";
@@ -160,12 +166,16 @@
         fbq("track", "Contact", {}, { eventID: event_id });
       }
 
-      // 2. ENVÍO AL EXCEL (Incluye nombre de anuncio)
+      // 2. ENVÍO AL EXCEL
       safeSend({ click_id, fbp, fbc, event_id, timestamp, ad_name, campaign_name });
 
-      // 3. MENSAJE DE WHATSAPP (Sin emoji, directo)
+      // 3. LÓGICA DEL ROTADOR (SELECCIÓN AL AZAR)
+      const randomIndex = Math.floor(Math.random() * WHATSAPP_ROTATOR.length);
+      const selectedNumber = WHATSAPP_ROTATOR[randomIndex];
+
+      // 4. MENSAJE Y APERTURA DE WHATSAPP
       const message = `Hola! Quiero mi 30% extra. (Cód: ${click_id})`;
-      window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, "_blank");
+      window.open(`https://wa.me/${selectedNumber}?text=${encodeURIComponent(message)}`, "_blank");
 
       setTimeout(() => {
         btn.disabled = false;
@@ -181,24 +191,3 @@
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
